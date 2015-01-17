@@ -1,8 +1,14 @@
-import re
 
-import parts_of_speech
 
-def combine(parts):
+def simplify(symbols):
+    for i, (current, next) in enumerate(zip(symbols, symbols[1:])):
+        combination = current.combine(next)
+        if combination:
+            symbols[i:i + 1] = [combination]
+            return symbols
+    raise SyntaxError("Symbols cannot be simplified: " + str(symbols))
+
+def parse(symbols):
     """
     :param parts: a list of objects representing words
     :return: an object representing a sentence
@@ -18,27 +24,28 @@ def combine(parts):
     if User_(the_).is_(active_):
         User_(the_).is_(banned_(not_))
     """
-    while parts:
-        for i in range(len(parts) - 2):
-            try:
-                combination = parts(i).combine(parts(i + 1))
-                del parts[i:i + 2]
-                parts.insert(i, combination)
-                break
-            except ValueError:
-                pass
-    return parts[0]
+    if len(symbols) == 0:
+        return ''
+    elif len(symbols) == 1:
+        return symbols[0]
+    return parse(simplify(symbols))
 
-def parse_paragraph(block):
-    statements = []
-    for sentence in re.split(r'\.[ \t]*[\n\r\f]+', block):
-        python = repr(combine(parts_of_speech.cast(sentence)))
-        statements.append(python)
-    return '\n'.join(statements)
+class Parser:
+    def __init__(self, buffer=[]):
+        self._buffer = buffer
 
-def parse_line(line, lines=[]):
-    lines.append(line)
-    if not line.strip():
-        block = '\n'.join(lines)
-        lines = []
-        return parse_paragraph(block)
+    def __next__(self):
+        block_ending = self.block_ending()
+        if block_ending:
+            block = '\n'.join(self.buffer[:block_ending])
+            self.buffer = self.buffer[block_ending:]
+            return repr(parse(block))
+        raise StopIteration
+
+    def block_ending(self):
+        for i, line in enumerate(self.buffer):
+            if not line.strip():
+                return i
+
+    def read(self, line):
+        self.buffer.append(line)

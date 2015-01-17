@@ -1,13 +1,14 @@
 import sys
 
-from interpreter import run_interpreter
-from compiler import run_compiler
+from parser import Parser
+from interpreter import Interpreter
+from compiler import Compiler
 
-version = '0.1'
+package_name = 'English Semantics 0.1'
 
 if __name__ == "__main__":
     file_paths = sys.argv[1:]
     if file_paths:
-        run_compiler(file_paths)
+        Compiler(file_paths).run()
     else:
-        run_interpreter()
+        Interpreter().run()
