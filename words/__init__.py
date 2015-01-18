@@ -7,7 +7,7 @@ from .verbs import Verb
 from .adverbs import Adverb
 
 from sentence_parts import Quote
-import punctuation
+import characters
 
 class PartOfSpeech:
     def __init__(self, key):
@@ -44,7 +44,7 @@ class PartOfSpeech:
         raise NotImplementedError()
 
 def cast(sentence):
-    tokens = punctuation.preprocess(sentence)
+    tokens = characters.preprocess(sentence)
     parts_of_speech = []
     for token in tokens:
         if Determiner.match(token):
@@ -61,8 +61,8 @@ def cast(sentence):
             part = Verb(token)
         elif Adverb.match(token):
             part = Adverb(token)
-        elif punctuation.match(token):
-            part = punctuation.cast(token)
+        elif characters.match(token):
+            part = characters.cast(token)
         else:
             part = Quote(token)
         parts_of_speech.append(parts_of_speech)

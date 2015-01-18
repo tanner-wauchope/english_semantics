@@ -1,4 +1,4 @@
-
+from . import Lexer
 
 def simplify(symbols):
     for i, (current, next) in enumerate(zip(symbols, symbols[1:])):
@@ -13,14 +13,14 @@ def parse(symbols):
     :param parts: a list of objects representing words
     :return: an object representing a sentence
     >>> message = "the user should leave in 12 seconds"
-    >>> combine(parts_of_speech.cast(message))
+    >>> combine(words.cast(message))
     User_(the_).leave_(should_, in_=Seconds_(12))
     >>> message = "the user is active. the user is not banned")
-    >>> combine(parts_of_speech.cast(message))
+    >>> combine(words.cast(message))
     User_(the_).is_(active_)
     User_(the_).is_(banned_(not_))
     >>> message = "if the user is active, the user is not banned"
-    >>> combine(parts_of_speech.cast(message))
+    >>> combine(words.cast(message))
     if User_(the_).is_(active_):
         User_(the_).is_(banned_(not_))
     """
@@ -33,13 +33,15 @@ def parse(symbols):
 class Parser:
     def __init__(self, buffer=[]):
         self._buffer = buffer
+        self.lexer = Lexer()
 
     def __next__(self):
         block_ending = self.block_ending()
         if block_ending:
-            block = '\n'.join(self.buffer[:block_ending])
+            block_lines = self.buffer[:block_ending]
             self.buffer = self.buffer[block_ending:]
-            return repr(parse(block))
+            self.lexer.read('\n'.join(block_lines))
+            return repr(parse(self.lexer.flush()))
         raise StopIteration
 
     def block_ending(self):
