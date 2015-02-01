@@ -1,4 +1,3 @@
-from .quotation import Quote
 
 import abc
 
