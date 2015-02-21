@@ -3,6 +3,7 @@ import sys
 from parser import Parser
 from interpreter import Interpreter
 from compiler import Compiler
+from patterns import Pattern
 
 package_name = 'English Semantics 0.1'
 

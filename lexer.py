@@ -1,18 +1,7 @@
 import decimal
-import enum
 import re
 
-from . import Word
-
-class Pattern(enum.Enum):
-    # Implement in subsequent versions
-    BLOCK = r':'
-    BRANCH = r'\n- '
-    LONG_QUOTE = r'\n(\t)'
-    # Implement Immediately
-    WORD = r'[^ ]+'
-    SHORT_QUOTE = r'"[^"]+"'
-    NUMBER = r'-?\d+(\.\d+)?'
+from . import Word, Pattern
 
 class Lexer:
     def __init__(self, lexicon={}, context={}):

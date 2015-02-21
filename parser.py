@@ -14,15 +14,11 @@ def parse(symbols):
     :return: an object representing a sentence
     >>> message = "the user should leave in 12 seconds"
     >>> combine(words.cast(message))
-    User_(the_).leave_(should_, in_=Seconds_(12))
-    >>> message = "the user is active. the user is not banned")
-    >>> combine(words.cast(message))
-    User_(the_).is_(active_)
-    User_(the_).is_(banned_(not_))
+    the(User).should(leave, in_=quantifier(12)(Seconds))
     >>> message = "if the user is active, the user is not banned"
     >>> combine(words.cast(message))
-    if User_(the_).is_(active_):
-        User_(the_).is_(banned_(not_))
+    if the(User).is_(active):
+        the(User).is_(not_(banned))
     """
     if len(symbols) == 0:
         return ''

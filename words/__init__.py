@@ -2,9 +2,7 @@ from .determiners import Determiner
 from .conjunctions import Conjunction
 from .prepositions import Preposition
 from .nouns import Noun
-from .adjectives import Adjective
 from .verbs import Verb
-from .adverbs import Adverb
 
 class PartOfSpeech:
     def __init__(self, key):
