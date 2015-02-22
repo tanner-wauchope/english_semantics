@@ -1,5 +1,5 @@
-from .determiners import Determiner
-from .conjunctions import Conjunction
+from .adjectives import Determiner
+from .operators import Conjunction
 from .prepositions import Preposition
 from .nouns import Noun
 from .verbs import Verb

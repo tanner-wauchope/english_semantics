@@ -1,127 +1,152 @@
 
-from words import PartOfSpeech
+class Constituency:
+    def __init__(self, left, right):
+        """
+        :param left: The left constituent
+        :param right: The right constituent
+        :return: A constituency rule that is sensitive to cardinality
+        """
+        if left.cardinality() is right.cardinality():
+            self._left = left
+            self._right = right
+        else:
+            message = str(left) + " doesn't agree with " + str(right)
+            raise SyntaxError(message)
 
-class Sentence(PartOfSpeech):
-    def __init__(self, clause, extra=None):
-        self.clause = clause
-        self.extra = None
-
-    def python(self):
-        if self.extra:
-            return '{subject}.{predicator}({extra})'.format(
-                subject=self.clause.noun_phrase.python(),
-                verb=self.clause.verb.python(),
-                extra=self.extra.python(),
-            )
-        return self.clause.python()
-
-    def combine(self):
-        return None
-
-class Clause(PartOfSpeech):
-    def __init__(self, noun_phrase, verb):
-        self.noun_phrase = noun_phrase
-        self.verb = verb
-
-    def python(self):
-        return '{subject}.{predicator}()'.format(
-            subject=self.clause.noun_phrase.python(),
-            verb=self.clause.verb.python(),
+    def __str__(self):
+        return '"{left} {right}"'.format(
+            left=self.left,
+            right=self.right,
         )
 
+    def cardinality(self, other):
+        return 0
+
+class Sentence(Constituency):
+    @property
+    def clause(self):
+        return self._left
+
+    @property
+    def end_punctuation(self):
+        return self._right
+
+    def __repr__(self):
+        return repr(self.clause)
+
+class Clause(Constituency):
+    @property
+    def noun_phrase(self):
+        return self._left
+
+    @property
+    def verb_phrase(self):
+        return self._right
+
+    def __repr__(self):
+        return '{noun_phrase}.{verb_phrase}'.format(
+            subject=repr(self.noun_phrase),
+            verb=repr(self.verb_phrase),
+        )
+
+    @staticmethod
+    def cast(noun_phrase, verb_phrase):
+        if isinstance(verb_phrase.argument, Complement):
+            return ComplementClause(noun_phrase, verb_phrase)
+        return ObjectClause(noun_phrase, verb_phrase)
+
+class ComplementClause(Clause):
     def combine(self, next):
-        if isinstance(next, PrepositionalPhrase):
+        if isinstance(next, EndPunctuation):
             return Sentence(self, next)
-        elif isinstance(next, NounPhrase):
-            return Sentence(self, next)
-        elif next is None:
-            return Sentence(self)
 
-class SingularSubjectClause(Clause):
+class ObjectClause(Clause):
     def combine(self, next):
-        if isinstance(next, PrepositionalPhrase):
+        if isinstance(next, EndPunctuation):
             return Sentence(self, next)
-        elif isinstance(next, SingularNounPhrase):
-            return Sentence(self, next)
+        elif isinstance(next, Complement):
+            object = self.verb_phrase.argument.combine(next)
+            verb_phrase = VerbPhrase(self.verb_phrase.verb, object)
+            return ComplementClause(self.noun_phrase, verb_phrase)
 
-class PluralSubjectClause(Clause):
-    def combine(self, next):
-        if isinstance(next, PrepositionalPhrase):
-            return Sentence(self, next)
-        elif isinstance(next, PluralNounPhrase):
-            return Sentence(self, next)
+class NounPhrase(Constituency):
+    def __repr__(self):
+        return repr(self.container())
 
-class NounPhrase:
-    def __init__(self, workset, property=None):
-        self.workset = workset
-        self.propery = property
+    def cardinality(self):
+        return self.container().cardinality()
 
-    def python(self):
-        if self.property:
-            return '{operator}({worksets})'.format(
-                operator=self.property.python(),
-                worksets=self.workset.python()
-            )
-        return self.workset.python()
+class CompoundNounPhrase(NounPhrase):
+    @property
+    def noun_phrase(self):
+        return self._left
 
-    @classmethod
-    def cast(workset, property=None):
-        end_workset = property.workset() if property else workset
-        if end_workset.limit() is 1:
-            return SingularNounPhrase(workset, property=property)
-        return PluralNounPhrase(workset, property=property)
-
-class PluralNounPhrase(NounPhrase):
-    def combine(self, next):
-        if isinstance(next, PluralCopula):
-            return PluralSubjectClause(self, next)
-        elif isinstance(next, PluralLexicalVerb):
-            return Clause(self, next)
-        elif isinstance(next, Clitic) and not self.property:
-            return PossessiveSpecifier(self.workset)
-
-class SingularNounPhrase(NounPhrase):
-    def combine(self, next):
-        if isinstance(next, SingularCopula):
-            return SingularSubjectClause(self, next)
-        elif isinstance(next, SingularLexicalVerb):
-            return Clause(self, next)
-        elif isinstance(next, Conjunction):
-            return ConjunctivePhrase(self, next)
-        elif isinstance(next, Clitic) and not self.property:
-            return PossessiveSpecifier(self.workset)
-
-class ConjunctivePhrase(PartOfSpeech):
-    def __init__(self, workset, conjunction):
-        self.workset = workset
-        self.conjunction = conjunction
+    @property
+    def complement(self):
+        return self._right
 
     def combine(self, next):
-        if isinstance(next, SingularNounPhrase):
-            new_workset = self.conjunction.operate(self.workset, next.workset)
-            if new_workset.limit() is 1:
-                return SingularNounPhrase(new_workset)
-            return PluralNounPhrase(new_workset)
+        if isinstance(next, VerbPhrase):
+            return Clause.cast(self, next)
+        elif isinstance(next, Complement):
+            return NounPhrase
 
-class PossessiveSpecifier(PartOfSpeech):
-    def __init__(self, workset):
-        self.workset = workset
+class SimpleNounPhrase(NounPhrase):
+    @property
+    def specifier(self):
+        return self._left
+
+    @property
+    def head(self):
+        return self._right
+
+    def combine(self, next):
+        if isinstance(next, VerbPhrase):
+            return Clause.cast(self, next)
+
+class Complement(Constituency):
+    @property
+    def operator(self):
+        return self._left
+
+    @property
+    def noun_phrase(self):
+        return self._right
+
+    def combine(self, next):
+        if isinstance(next, SimpleNounPhrase):
+            return CompoundNounPhrase(self, next)
+
+    def cardinality(self):
+        return self.noun_phrase.container().cardinality()
+
+class Specifier(Constituency):
+    @property
+    def determiner(self):
+        return self._left
+
+    @property
+    def uncountable_noun(self):
+        return self._right
 
     def combine(self, next):
         if isinstance(next, CountableNoun):
-            return NounPhrase.cast(self.workset, property=next)
+            return SimpleNounPhrase(self, next)
 
-class AttributiveSpecifier(PartOfSpeech):
-    def __init__(self, determiner, uncountable_noun):
-        self.determiner = determiner
-        self.uncountable_noun = uncountable_noun
+class VerbPhrase(Constituency):
+    @property
+    def verb(self):
+        return self._left
 
-    def combine(self, next):
-        if isinstance(next, CountableNoun):
-            return NounPhrase.cast(
-                next.workset(self.determiner, self.uncountable_noun)
-            )
+    @property
+    def argument(self):
+        return self._right
 
+    def __repr__(self):
+        return '{verb}({object})'.format(
+            verb=repr(self.verb),
+            object=repr(self.object),
+        )
 
 ###########
 
