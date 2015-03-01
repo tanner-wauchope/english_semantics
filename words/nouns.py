@@ -1,6 +1,6 @@
 
 from . import PartOfSpeech
-import sentence_parts
+import constituency
 
 def pluralize(base):
     if base.endswith('s'):
@@ -16,33 +16,33 @@ class Noun(PartOfSpeech):
 
     def singular(self):
         if self.countable:
-            return Singular(self.base)
+            return SingularNoun(self.base)
 
     def plural(self):
         if self.countable:
-            return Plural(pluralize(self.base))
+            return PluralNoun(pluralize(self.base))
 
     def uncountable(self):
         if not self.countable:
-            return self.Uncountable(self.base)
+            return self.UncountableNoun(self.base)
 
-class Singular(Noun):
+class SingularNoun(Noun):
     """
     The singular form of a countable noun.
     """
     pass
 
-class Plural(Noun):
+class PluralNoun(Noun):
     """
     The plural form of a countable noun.
     """
     pass
 
-class Uncountable(Noun):
+class UncountableNoun(Noun):
     """
     A primitives or attributive noun.
     """
     def combine(self, rest):
         next = rest[0]
         if isinstance(next, PluralNoun):
-            return sentence_parts.PluralNounPhrase(self, next)
+            return constituency.PluralNounPhrase(self, next)
