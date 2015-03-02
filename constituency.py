@@ -1,15 +1,35 @@
 
 class Constituency:
-    def __init__(self, left, right):
-        self._left = left
-        self._right = right
+    def __init__(self, specifier=None, head=None, complement=None):
+        self.specifier = specifier or self.empty_specifier()
+        self.head = head or self.empty_specifier()
+        self.complement = complement or self.empty_complement()
 
     def __str__(self):
-        return '"{left} {right}"'.format(
-            left=self._left,
-            right=self._right,
+        return ' '.join(
+            str(self.specifier),
+            str(self.head),
+            str(self.complement),
         )
 
+    def empty_specifier(self):
+        return None
+
+    def empty_head(self):
+        return None
+
+    def empty_complement(self):
+        return None
+
+    def rightmost_unfilled_part(self):
+        if self.complement.is_full():
+            return None
+        elif self.head.is_full():
+            return self.complement
+        elif self.specifier.is_full():
+            return self.head
+        else:
+            return self.specifier
 
 class Clause(Constituency):
     @property

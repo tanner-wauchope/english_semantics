@@ -1,50 +1,54 @@
 import decimal
 import re
+import enum
 
-from . import Word, Pattern
+from .words import Word
 
-class Lexer:
-    def __init__(self, lexicon={}, context={}):
-        self.lexicon = lexicon
-        self.context = context
+STRING = re.compile(r'("(?:[^"\\]|\\.)*")')
+NUMBER = re.compile(r'-?\d+(\.\d+)?')
+WORD = re.compile(
+    r"^(?P<base>[A-Z]?[a-z]+(-[a-z]+)*)"
+    r"(?P<suffix>,|\.|'|'s)?$"
+)
 
-    def pattern_matches(self, text):
-        matches = {}
-        for pattern in Pattern:
-            match = re.match(pattern.value, text)
-            if match:
-                matches[pattern] = match
-        return matches
+class Punctuation(enum.Enum):
+    SINGULAR_GENITIVE = "'s"
+    PLURAL_GENITIVE = "'"
+    COMMA = ','
+    PERIOD = '.'
 
-    def lookup(self, token):
-        if token in self.context:
-            return self.context[token]
-        return self.lexicon[token]
+    @classmethod
+    def cast(cls, value):
+        for punctuation in cls:
+            if punctuation.value == value:
+                return punctuation
 
-    def cast(self, pattern, token):
-        if pattern is Pattern.NUMBER:
-            return decimal.Decimal(token)
-        elif pattern is Pattern.SHORT_QUOTE:
-            return token
-        elif pattern is Pattern.WORD:
-            return self.lookup[token]
+def quote_split(text):
+    result = []
+    sections = STRING.split(text)
+    for section in sections:
+        result.extend(section.split())
+    return result
 
-    def next_lexeme(self, text):
-        next_lexeme = None
-        longest_token = ''
-        pattern_matches = self.pattern_matches(text)
-        for pattern in pattern_matches:
-            token = pattern_matches[pattern].group()
-            if len(token) > len(longest_token):
-                longest_token = token
-                next_lexeme = self.cast(pattern, token)
-        return next_lexeme
+def word_parts(token):
+    word_parts = []
+    word = WORD.match(token)
+    base = word.group('base')
+    suffix = word.group('suffix')
+    word_parts.append(Word.cast(base))
+    if suffix:
+        word_parts(Punctuation.cast(suffix))
+    return word_parts
 
-    def tokenize(self, text):
-        result = []
-        while text:
-            token = self.scan(text)
-            text = text[len(token):]
-            result.append(token)
-        return result
-
+def tokenize(self, text):
+    tokens = []
+    for token in quote_split(text):
+        if STRING.match(token):
+            tokens.append(token)
+        elif NUMBER.match(token):
+            tokens.append(decimal.Decimal(token))
+        elif WORD.match(token):
+            tokens.extend(word_parts(token))
+        else:
+            raise SyntaxError('Invalid token: ' + token)
+    return tokens

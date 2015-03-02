@@ -4,6 +4,8 @@ from .prepositions import Preposition
 from .nouns import Noun
 from .verbs import Verb
 
+class Word:
+    pass
 
 class Container:
     """

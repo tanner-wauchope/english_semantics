@@ -1,15 +1,15 @@
-import sys
-
-from parser import Parser
-from interpreter import Interpreter
-from compiler import Compiler
-from patterns import Pattern
+from lexer import tokenize
 
 package_name = 'English Semantics 0.1'
 
-if __name__ == "__main__":
-    file_paths = sys.argv[1:]
-    if file_paths:
-        Compiler(file_paths).run()
-    else:
-        Interpreter().run()
+def parse_line(line):
+    tokens = tokenize(line)
+    result = tokens.pop(0)
+    while tokens:
+        result = result.combine(tokens.pop(0))
+    return repr(result)
+
+def parse_block(block):
+    return '\n'.join(parse_line(line) for line in block)
+
+
