@@ -2,6 +2,7 @@ import sys
 
 from . import package_name, parse_block
 
+
 def run_interpreter():
     print(package_name + '\n' + '>>> ')
     block = []
@@ -14,6 +15,7 @@ def run_interpreter():
         else:
             print('... ')
 
+
 def run_compiler(source_path):
     block = []
     with open(source_path.replace('.english', 'lexer.py'), 'w') as target:
@@ -23,7 +25,8 @@ def run_compiler(source_path):
             for line in source.readlines():
                 block.append(line)
                 if line.isspace():
-                    print(parse(block), file=target)
+                    print(parse_block(block), file=target)
+
 
 if __name__ == "__main__":
     arguments = sys.argv[1:]

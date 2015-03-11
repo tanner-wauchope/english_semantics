@@ -1,7 +1,7 @@
 from . import Operator, Conjunction, Coordinator, Subordinator
 
-# Coordinator('and')
-# Coordinator('or')
+_and = Coordinator('and')
+_or = Coordinator('or')
 
 # Subordinator('if')
 # Subordinator('while')

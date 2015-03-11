@@ -1,7 +1,6 @@
-from .determiners import Determiner
+
 from .conjunctions import Conjunction
 from .prepositions import Preposition
-from .nouns import Noun
 from .verbs import Verb
 
 class Word:
@@ -42,14 +41,6 @@ class Predicate:
     # Returns an event that encapsulates a side-effect
     """
     pass
-
-class Word:
-    def __init__(self, spelling, meaning):
-        self.spelling = spelling
-        self.meaning = meaning
-
-    @property
-    def meaning(self):
 
 
 ########
