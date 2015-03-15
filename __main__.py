@@ -1,35 +1,41 @@
 import sys
 
-from . import package_name, parse_block
+from parser import parse
 
+package_name = 'English Semantics 0.1'
 
 def run_interpreter():
-    print(package_name + '\n' + '>>> ')
+    print(package_name)
+    print('>>> ', end='')
     block = []
+    line = ''
     while True:
         line = input()
         block.append(line)
         if line.isspace():
-            exec(parse_block(block))
-            print('>>> ')
+            exec(parse(block))
+            print('>>> ', end='')
         else:
-            print('... ')
+            print('... ', end='')
 
 
 def run_compiler(source_path):
     block = []
-    with open(source_path.replace('.english', 'lexer.py'), 'w') as target:
+    output_path = source_path.replace('.english', '.py')
+    with open(output_path, 'w') as target:
         print('# ' + package_name, file=target)
         print('from english_semantics.words import *\n', file=target)
         with open(source_path, 'r') as source:
             for line in source.readlines():
                 block.append(line)
                 if line.isspace():
-                    print(parse_block(block), file=target)
+                    print(parse(block), file=target)
+    print('Compilation succeeded.')
+    print('The output was written to ' + output_path)
 
 
-if __name__ == "__main__":
-    arguments = sys.argv[1:]
+def main(*arguments):
+    arguments = arguments or sys.argv[1:]
     if len(arguments) is 0:
         run_interpreter()
     elif len(arguments) is 1 and not arguments[0].startswith('-h'):
@@ -37,3 +43,5 @@ if __name__ == "__main__":
     else:
         print('Provide zero arguments to run the interpreter.')
         print('Provide a file path to run the compiler.')
+
+main()

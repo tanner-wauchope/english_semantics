@@ -1,5 +1,5 @@
 from parser import Word
-from .countable_nouns import is_singular
+from words.nouns.countable_nouns import is_singular
 
 class WorkSet:
     """

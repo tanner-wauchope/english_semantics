@@ -1,7 +1,13 @@
 
-from .conjunctions import Conjunction
+from .closed_word_classes import Conjunction
 from .prepositions import Preposition
 from .verbs import Verb
+
+
+
+class Discourse:
+    """ Stores local context """
+    pass
 
 class Word:
     pass
