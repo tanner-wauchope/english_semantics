@@ -24,7 +24,7 @@ def run_compiler(source_path):
     output_path = source_path.replace('.english', '.py')
     with open(output_path, 'w') as target:
         print('# ' + package_name, file=target)
-        print('from english_semantics.words import *\n', file=target)
+        print('from english_semantics.semantics import *\n', file=target)
         with open(source_path, 'r') as source:
             for line in source.readlines():
                 block.append(line)

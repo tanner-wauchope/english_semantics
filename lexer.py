@@ -1,7 +1,7 @@
 import decimal
 import re
 
-from .words import Word
+from semantics import Word
 
 STRING = re.compile(r'("(?:[^"\\]|\\.)*")')
 NUMBER = re.compile(r'-?\d+(\.\d+)?')

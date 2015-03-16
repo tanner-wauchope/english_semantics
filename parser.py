@@ -1,3 +1,5 @@
+from semantics import Constituency
+
 from lexer import tokenize
 
 def parse(block):
@@ -20,49 +22,3 @@ def unify(constituencies):
         if combination:
             constituencies[:-2] = [combination]
     return constituencies
-
-
-
-
-class Clause(Constituency):
-    @property
-    def subject(self):
-        return self.specifier
-
-    @property
-    def verb(self):
-        return self.head
-
-    @property
-    def object(self):
-        return self.complement
-
-    def __repr__(self):
-        return '{subject}.{verb}({object})'.format(
-            subject=repr(self.subject),
-            verb=repr(self.verb),
-            object=repr(self.object),
-        )
-
-
-class NounPhrase(Constituency):
-    @property
-    def determiner(self):
-        return self.specifier
-
-    @property
-    def noun(self):
-        return self.head
-
-    @property
-    def verb(self):
-        return self.complement
-
-    def __repr__(self):
-        return 'WorkSet({determiner} {noun}){verb}'.format(
-            subject=repr(self.determiner), # includes a trailing comma
-            verb=repr(self.noun),
-            object=repr(self.operator),
-        )
-
-
