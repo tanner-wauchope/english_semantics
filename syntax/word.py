@@ -52,3 +52,4 @@ class Word:
         for Type in self.specifies_types():
             if isinstance(other, Type):
                 return True
+

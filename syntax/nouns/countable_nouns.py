@@ -8,46 +8,14 @@ def is_singular(noun):
 def is_plural(noun):
     return isinstance(noun, PluralNoun)
 
-class Record:
-    def __init__(self):
-        self.do = []
-        self.are = []
-        self.have = []
-
-class Table:
-    """
-    I should also use an instance of this class to hold words.
-    This would let me define words from within the language.
-    """
-    def __init__(self):
-        self.records = {}
-        self.do = []
-        self.are = []
-        self.have = []
-
-        class Record:
-            def __init__(self, do, are, have):
-                self.do = do
-                self.are = are
-                self.have = have
-
-        self.record_type = Record
-
-    def read(self, key):
-        return self.records.get(key)
-
-    def write(self, key, do=[], are=[], have=[]):
-        do = self.do.extend(do)
-        are = self.are.extend(are)
-        have = self.have.extend(have)
-        self.records[key] = self.record_type(do, have, are)
-
 
 class CountableNoun(Noun):
     REQUIRES_SPECIFIER = True
 
 
 class SingularNoun(CountableNoun):
+
+
     def plural_spelling(self):
         spelling = self.spelling
         if self.soft_singular_ending():

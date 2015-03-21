@@ -18,10 +18,8 @@ class TestLexer(TestCase):
     def test_string_invalid(self):
         # Empty strings
         self.assertIsNone(STRING.match(''))
-        # Unquoted strings
+        # Unquoted string
         self.assertIsNone(STRING.match('abc'))
-        # Strings containing unescaped double quotes
-        self.assertIsNone(STRING.match('" " "'))
         # Strings missing an opening double quote
         self.assertIsNone(STRING.match('abc"'))
         # Strings missing a closing double quote
@@ -76,15 +74,31 @@ class TestLexer(TestCase):
     def test_word_invalid(self):
         # Empty strings
         self.assertIsNone(WORD.match(''))
-        # Quotes
-        self.assertIsNone(WORD.match('"abc"'))
+        # Strings with leading hyphens
+        self.assertIsNone(WORD.match('-abc'))
+        # Strings with trailing hyphens
+        self.assertIsNone(WORD.match('abc-'))
+        # Acronyms
+        self.assertIsNone(WORD.match('ABC'))
         # Numbers
         self.assertIsNone(WORD.match('123'))
-        # Un-conjoined punctuation
+        # Un-conjoined apostrophe
+        self.assertIsNone(WORD.match("'"))
+        # Un-conjoined comma
         self.assertIsNone(WORD.match(','))
 
-    def test_split_by_quotes(self):
-        pass
+    def test_split_by_unquoted_whitespace(self):
+        sentence = 'the console says "hello world"'
+        actual_result = split_by_unquoted_whitespace(sentence)
+        expected_result = [
+            'the',
+            'console',
+            'says',
+            '"hello world"',
+        ]
+        self.assertEqual(actual_result, expected_result)
 
     def test_tokenize(self):
-        pass
+        actual_result = tokenize('123 "abc" exit')
+        expected_result = [123, "abc", _exit]
+        self.assertEqual(actual_result, expected_result)

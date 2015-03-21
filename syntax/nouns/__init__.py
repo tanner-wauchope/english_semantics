@@ -1,13 +1,28 @@
 from parser import Word
-from words.nouns.countable_nouns import is_singular
+from syntax.nouns.countable_nouns import is_singular
 
-class WorkSet:
-    """
-    The meaning of a nouns and determiners.
-    """
-    def __init__(self, *constraints, definite=None):
-        self.constraints = constraints
-        self.definite = definite
+
+class NounPhrase(Constituency):
+    @property
+    def determiner(self):
+        return self.specifier
+
+    @property
+    def noun(self):
+        return self.head
+
+    @property
+    def verb(self):
+        return self.complement
+
+    def __repr__(self):
+        return 'WorkSet({determiner} {noun}){verb}'.format(
+            subject=repr(self.determiner), # includes a trailing comma
+            verb=repr(self.noun),
+            object=repr(self.operator),
+        )
+
+
 
 class Noun(Word):
     pass

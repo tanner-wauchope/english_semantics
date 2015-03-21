@@ -1,4 +1,4 @@
-from words import Operator, Conjunction, Coordinator, Subordinator
+from semantics import Operator, Conjunction, Coordinator, Subordinator
 
 _and = Coordinator('and')
 _or = Coordinator('or')

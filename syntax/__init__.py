@@ -1,3 +1,4 @@
+
 class Constituency:
     def __init__(self, word):
         self.complements = None

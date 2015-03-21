@@ -25,7 +25,7 @@ class Kind:
         self.states = []
 
     def create(self, key, actions=[], states=[]):
-        instance = Instance(self, actions, states)
+        instance = Instance(self, key, actions, states)
         self.instances[key] = instance
         return instance
 
@@ -46,7 +46,6 @@ class WorkSet:
 
     def __init__(self, kind, definite=False, singular=False):
         self.kind = kind
-        self.instances = self.load_instances(definite, singular)
 
     def instances(self, definite, singular):
         if definite and singular:
@@ -54,7 +53,14 @@ class WorkSet:
         elif definite and not singular:
             return self.recent()
         elif not definite and singular:
-            return self.kind.create()
+            return self.new
+
+    @property
+    def new(self):
+        if not hasattr(self, '_new'):
+            self._new = self.kind.create()
+        return self._new
+
 
     def most_recent(self):
         for instance in self.__class__.discourse:

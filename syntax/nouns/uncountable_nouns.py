@@ -1,5 +1,5 @@
 from . import Noun, WorkSet
-from words.nouns.countable_nouns import CountableNoun
+from syntax.nouns.countable_nouns import CountableNoun
 
 class Query:
     pass

@@ -1,5 +1,5 @@
 from parser import Word
-from words import Noun, Verb
+from semantics import Noun, Verb
 
 class Preposition(Word):
     """ before, after """

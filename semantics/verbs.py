@@ -30,34 +30,45 @@ class Relationship:
     """
     For some sentences, the time the sentence is spoken does not matter.
     These sentences can be repeated or shuffled without a change of meaning.
+    These sentences require a subject, because they are not imperative.
+    Verbs in these sentences are _stative_.
     """
-    relationships = {}
+    relationships_by_subject = {}
+    relationships_by_verb = {}
+    relationships_by_complement = {}
 
-    def __init__(self, subject, complement):
+    def __init__(self, subject, verb, complement=None):
         self.subject = subject
+        self.verb = verb
         self.complement = complement
 
     def __eq__(self, other):
         return (
             self.subject == other.subject and
+            self.verb == other.verb and
             self.complement == other.complement
         )
 
     @classmethod
-    def create(cls, subject, stative_verb, complement):
-        relationship = cls(subject, complement)
-        if stative_verb not in cls.relationships:
-            cls.relationships[stative_verb] = set()
-        cls.relationships[stative_verb].add(relationship)
+    def create(cls, subject, verb, complement):
+        relationship = cls(subject, verb, complement)
+        if subject not in cls.relationships_by_subject:
+            cls.relationships_by_subject[subject] = set()
+        cls.relationships_by_subject[subject].add(relationship)
+        if verb not in cls.relationships_by_verb:
+            cls.relationships_by_verb[verb] = set()
+        cls.relationships_by_verb[verb].add(relationship)
+        if complement not in cls.relationships_by_complement:
+            cls.relationships_by_complement[complement] = set()
+        cls.relationships_by_complement[complement].add(relationship)
         return relationship
 
     @classmethod
-    def direct_filter(cls, subject, stative_verb, complement):
-        result = set()
-        goal = Relationship(subject, complement)
-        for relationship in cls.relationships[stative_verb]:
+    def direct_filter(cls, goal):
+        result = []
+        for relationship in cls.relationships_by_verb[goal.verb]:
             if relationship == goal:
-                result.add(relationship)
+                result.append(relationship)
         return result
 
     @classmethod
@@ -93,5 +104,3 @@ class Relationship:
             return cls.symmetric_filter(subject, stative_verb, complement)
         else:
             return cls.asymmetric_filter(subject, stative_verb, complement)
-
-
