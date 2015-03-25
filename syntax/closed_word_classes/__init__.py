@@ -1,4 +1,4 @@
-from parser import Word
+from translator import Word
 from semantics import Noun, Verb
 
 class Preposition(Word):

@@ -1,4 +1,4 @@
-from parser import Word
+from translator import Word
 from syntax.nouns.countable_nouns import is_singular
 
 

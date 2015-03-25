@@ -8,7 +8,7 @@ class TestMain(TestCase):
     def setUp(self):
         self.saved_stdin = sys.stdin
         self.saved_stdout = sys.stdout
-        sys.stdin = open('demo_keywords.english')
+        sys.stdin = open('keywords.english')
         sys.stdout = io.StringIO()
 
     def tearDown(self):
@@ -27,7 +27,7 @@ class TestMain(TestCase):
         )
 
     def test_run_compiler(self):
-        main('demo_keywords.english')
+        main('keywords.english')
         self.assertEqual(
             sys.stdout.getvalue(),
             'Compilation succeeded.\n'
@@ -36,14 +36,14 @@ class TestMain(TestCase):
             self.assert_equal(
                 file.read(),
                 '# ' + package_name + '\n'
-                'from english_semantics.semantics import *\n'
+                'from plain_english.semantics import *\n'
                 'exit()'
             )
 
     def test_main(self):
-        main('demo_keywords.english', 'demo_keywords.english')
+        main('keywords.english', 'keywords.english')
         self.assertEqual(
             sys.stdout.getvalue(),
-            'Provide zero arguments to run the interpreter.\n'
+            'Provide no arguments to run the interpreter.\n'
             'Provide a file path to run the compiler.\n'
         )

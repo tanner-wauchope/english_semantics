@@ -1,0 +1,6 @@
+A positive integer N has a factorial.
+If N is 0,
+    the factorial is 1.
+Otherwise,
+    the factorial is N times the factorial of the previous integer.
+

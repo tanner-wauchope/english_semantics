@@ -1,6 +1,5 @@
 import sys
-
-from parser import parse
+from translator import parse
 
 package_name = 'English Semantics 0.1'
 
@@ -12,7 +11,7 @@ def run_interpreter():
     while True:
         line = input()
         block.append(line)
-        if line.isspace():
+        if not line.strip():
             exec(parse(block))
             print('>>> ', end='')
         else:
@@ -24,7 +23,7 @@ def run_compiler(source_path):
     output_path = source_path.replace('.english', '.py')
     with open(output_path, 'w') as target:
         print('# ' + package_name, file=target)
-        print('from english_semantics.semantics import *\n', file=target)
+        print('from plain_english.semantics import *\n', file=target)
         with open(source_path, 'r') as source:
             for line in source.readlines():
                 block.append(line)
@@ -41,7 +40,7 @@ def main(*arguments):
     elif len(arguments) is 1 and not arguments[0].startswith('-h'):
         run_compiler(arguments[0])
     else:
-        print('Provide zero arguments to run the interpreter.')
+        print('Provide no arguments to run the interpreter.')
         print('Provide a file path to run the compiler.')
 
 main()
