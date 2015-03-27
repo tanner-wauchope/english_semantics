@@ -1,26 +1,13 @@
 # Fibonacci is a person that has numbers.
-Fibonacci.is_(
-    a(Person).that(
-        has(Numbers)
-    )
-)('.')
-# The first Fibonacci numbers are 0 and 1.
-the(
-    Ordinal(1)(Fibonacci.numbers)
-).are(
-    Cardinal(0).and_(Cardinal(1))
-)('.')
-# Any other Fibonacci number is the sum of
-#     the previous Fibonacci number and
-#     the Fibonacci number before that.
-any_(
-    other(Fibonacci.number)
-).is_(
-    the(sum_).of(
-        the(
-            previous(Fibonacci.number)
-        ).and_(
-            the(Fibonacci.number).before(that)
-        )
-    )
-)('.')
+'Fibonacci'.is_(a(Person).that(has(Numbers)))('.')
+# The 1st Fibonacci numbers are 0 and 1.
+The('1st')(Fibonacci.numbers).are(0).and_(1)('.')
+# Any other Fibonacci number is
+Any_(other(Fibonacci.number)).is_(
+    # the previous Fibonacci number plus
+    the(previous(Fibonacci.number)).plus(
+    # the Fibonacci number before that.
+    the(Fibonacci.number).before(that)))('.')
+
+# What is the 5th Fibonacci number?
+What.is_(the('5th')(Fibonacci.number))('?')

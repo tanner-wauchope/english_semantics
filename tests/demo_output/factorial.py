@@ -1,30 +1,13 @@
-# A positive integer N has a positive integer factorial.
-a(
-    positive(integer)
-)(Name('N')).has(
-    a(
-        positive(Integer)
-    )(Name('factorial'))
-)('.')
-# If N is 0,
-#     the factorial is 1.
-if_(
-    N.is_(Cardinal(0))
-)(',')(
-    the(factorial)._is(Cardinal(1))
-)('.')
+# A whole number N has a factorial.
+a(whole(Number))('N').has(a('factorial'))('.')
+    # If N is 0,
+    if_(N.is_(0))(',')(
+        # the factorial is 1.
+        the(Factorial).is_(1))('.')
 # Otherwise,
-#     the factorial is N times the factorial of the previous integer.
 otherwise(',')(
-    the(
-        factorial
-    ).is_(
-        N.times(
-            the(factorial).of(
-                the(
-                    previous(Integer)
-                )
-            )
-        )
-    )
-)
+    # it is N times the factorial of N minus 1.
+    it.is_(N.times(the(Factorial).of(N.minus(1)))))('.')
+
+# What is the factorial of 5?
+What.is_(the(factorial).of(5))('?')
