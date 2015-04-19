@@ -2,8 +2,8 @@ from unittest import TestCase
 
 from language.syntax import *
 from ...language.syntax.constituency import Constituency
-from ...language.syntax.parser import Parser
-from ...language.syntax.tokenizer import Lexer
+from ...language.syntax.parse import Parser
+from ...language.syntax.tokenize import Lexer
 
 class TestMain(TestCase):
     def setUp(self):

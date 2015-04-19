@@ -1,18 +1,18 @@
 from unittest import TestCase
 
-from language.syntax import parser
-from language.syntax.tokenizer import tokenize
+from language.syntax import parse
+from language.syntax.tokenize import tokenize
 
 
 class TestMain(TestCase):
     def test_explicit_complementizer(self):
         self.assertEqual(
-            parser(tokenize("noun that does")),
+            parse(tokenize("noun that does")),
             "Noun.that(does)"
         )
 
     def test_implicit_complementizer(self):
         self.assertEqual(
-            parser(tokenize("noun noun does")),
+            parse(tokenize("noun noun does")),
             "Noun(Noun.does)"
         )

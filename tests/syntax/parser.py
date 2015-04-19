@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from language.syntax import Clause, NounPhrase
-from language.syntax.parser import parse, unify
+from language.syntax.parse import parse, unify
 
 class TestParser(TestCase):
     def test_parse(self):

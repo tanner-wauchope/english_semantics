@@ -1,19 +1,19 @@
 from unittest import TestCase
 
-from language.syntax import parser
-from language.syntax.tokenizer import tokenize
+from language.syntax import parse
+from language.syntax.tokenize import tokenize
 
 
 class TestMain(TestCase):
     def test_intransitive_verb(self):
         self.assertEqual(
-            parser(tokenize("noun does")),
+            parse(tokenize("noun does")),
             "Noun.does"
         )
 
     def test_transitive_verb(self):
         self.assertEqual(
-            parser(tokenize("noun does noun")),
+            parse(tokenize("noun does noun")),
             "Noun.does(Noun)"
         )
 
