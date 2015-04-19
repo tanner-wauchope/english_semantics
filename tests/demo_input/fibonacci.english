@@ -1,7 +1,0 @@
-Fibonacci is a person that has numbers.
-    The first Fibonacci numbers are 0 and 1.
-    Any other Fibonacci number is the sum of
-        the previous Fibonacci number and
-        the Fibonacci number before that.
-
-What is the fifth Fibonacci number?
