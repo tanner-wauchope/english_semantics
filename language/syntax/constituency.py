@@ -1,4 +1,4 @@
-from language.syntax.primitives import Number, String
+from language.syntax.common.primitives import Number, String
 
 
 class Constituency:

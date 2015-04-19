@@ -1,0 +1,27 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: Syntax Name
+scopeName: source.syntax_name
+fileTypes: []
+uuid: 0da65be4-5aac-4b6f-8071-1aadb970b8d9
+
+patterns:
+- name: string.quoted.double
+  match: "(?:[^"\\]|\\.)*"
+- name: string.quoted.single
+  match: ([\t ]+'[-a-zA-Z]+')
+- name: constant.numeric
+  match: [+-]?\d+(\.\d+)?
+- name: variable.other
+  match: [-a-zA-Z]+
+- name: keyword.control
+  match: (if|to|for|,|\.)
+- name: keyword.operator
+  match: (and|or|not)
+- name:keyword.other
+  match: ('|'s|of|that|with)
+- name: variable.parameter
+  match: ([\t ]+[A-Z][\t\n\., ]+)
+- name: variable.language
+  match: (it|this|noun|verb|do|does|is|are|has|have)
+...

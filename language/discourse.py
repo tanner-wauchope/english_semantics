@@ -1,6 +1,8 @@
 import collections
 
-from language.syntax import scan, tokenize, parse
+from language.syntax.scan import scan
+from language.syntax.tokenize import tokenize
+from language.syntax.parse import parse
 
 
 class Discourse:

@@ -1,9 +1,29 @@
-from scan import scan
-from tokenize import tokenize
-from parse import parse
-
 it_ = ''
 is_ = ''
+
+
+def try_possessive(text):
+    parts = text.split("'")
+    return len(parts) is 2 and parts[0].isalpha() and parts[1] in "s"
+
+def try_quote(text):
+    """
+    :param text: text that might be a well-formed quote
+    :return: whether the text is a well-formed quote
+    """
+    try:
+        if len(text) > 2 and text[0] == text[-1] and text[0] in '"' + "'":
+            return isinstance(eval(text), str)
+    except SyntaxError:
+        return None
+
+
+def try_float(text):
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
 
 class Constituency:
     def __init__(self, word):

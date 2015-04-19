@@ -15,5 +15,5 @@ class Compiler:
     def run(self):
         with open(self.path + '.py', 'w') as target:
             for interpretation in self.interpretations():
-                print(str(interpretation), file=target)
+                print(str(interpretation), file=target, end='')
         print('Compilation succeeded.')

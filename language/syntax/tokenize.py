@@ -1,63 +1,36 @@
-import re
-
-import language
-from language.syntax.common import WordClass
-from language.syntax.common.numbers import Number
-from language.syntax.common.strings import String
+from language.syntax import try_quote, try_float, try_possessive
+from language.syntax.common.primitives import Number, String
+from language.syntax.nouns.possession import Clitic
 
 
-STRING = re.compile(r'("(?:[^"\\]|\\.)*")')
-NUMBER = re.compile(r'-?\d+(\.\d+)?')
-TERM = re.compile(
-    r"^(?P<word>[A-Z]?[a-z]+(-[a-z]+)*)"
-    r"(?P<punctuation>,|\.|'|'s)?$"
-)
+class WordClass:
+    def specifies(self):
+        pass
+
+    def complements(self):
+        pass
 
 
-class Lexeme:
-    def __init__(self, spelling, word_class=None):
+class Token:
+    def __init__(self, spelling, word_class):
         self.spelling = spelling
         self.word_class = word_class
 
-    def __str__(self):
-        return self.spelling
 
-
-class Tokenizer:
-    def __init__(self):
-        self.local_scope = {}
-        self.global_scope = {}
-        self.topic = None
-
-    def run(self, block, topics):
-        self.local_scope = {}
-        lexemes = []
-        for string in scan(block):
-            if STRING.match(string):
-                lexemes.append(Lexeme(string, word_class=String))
-            elif NUMBER.match(string):
-                lexemes.append(Lexeme(string, word_class=Number))
+def tokenize(self, paragraph):
+    self.local_scope = {}
+    for line in paragraph.lines():
+        for i, lexeme in enumerate(paragraph.lines()):
+            if lexeme.isalpha():
+                line[i] = paragraph.lookup(lexeme)
+            if try_quote(lexeme):
+                line[i] = (lexeme, String)
+            elif try_float(lexeme):
+                line[i] = (lexeme, Number)
+            elif try_possessive(lexeme):
+                word, clitic = lexeme.split('"')
+                line[i] = paragraph.lookup(word)
+                line.insert(i + 1, ("'" + clitic, Clitic))
             else:
-                term = TERM.match(string)
-                word = term.group(0)
-                punctuation = term.group(1)
-                lexemes.append(self.lookup(word) or self.define(word))
-                lexemes.append(self.lookup(punctuation))
-        return lexemes
-
-    def lookup(self, spelling):
-        if spelling in self.local_scope:
-            return self.local_scope[spelling]
-        elif spelling in self.global_scope:
-            return self.global_scope[spelling]
-        elif hasattr(language, spelling + '_'):
-            return getattr(syntax, spelling + '_')
-
-    def define(self, spelling):
-        lexeme = Lexeme(spelling, word_class=WordClass)
-        if self.topic:
-            self.local_scope[spelling] = lexeme
-        else:
-            self.topic = lexeme
-            self.global_scope[spelling] = lexeme
-        return lexeme
+                raise NameError(lexeme)
+    return paragraph
