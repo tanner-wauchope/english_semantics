@@ -1,40 +1,48 @@
-import collections
+from language.syntax import scan, tokenize, parse, generate, warn
+from language.syntax.primitives.topic import Topic
 
-from language.syntax.scan import scan
-from language.syntax.tokenize import tokenize
-from language.syntax.parse import parse
+
+def get_topic(tree):
+    """
+    :param tree: a binary tree of constituencies
+    :return: the first topic found by depth-first search
+    """
+    if tree.head.word_class is Topic:
+        return tree
+    elif tree.specifier:
+        return get_topic(tree.specifier)
+    elif tree.complement:
+        return get_topic(tree.complement)
 
 
 class Discourse:
+    """
+    A discourse maintains inter-block state during interpretation.
+    It tracks topics defined in previous paragraphs.
+    It also keeps track of lines that have not yet formed a complete paragraph.
+    """
     def __init__(self):
         """
-        Initialize a dictionary to hold paragraph topics.
+        Initialize a dictionary to hold the topics of previous paragraphs.
+        Initialize a buffer to hold lines of an incomplete paragraph.
         Expose language keywords to the Python runtime environment.
         """
-        self.topics = collections.OrderedDict()
+        self.topics = {}
         self.paragraph = ''
         self.interpret('"from language import *"\n')
         self.interpret('\n')
 
-    def flush(self):
-        """
-        Add the first topic of the paragraph to the global scope.
-        Then, reset the paragraph before return it.
-        """
-        result = self.paragraph
-        topic = result.scope.popitem(last=False)
-        self.topics[topic[0]] = topic[1]
-        self.paragraph = ''
-        return result
-
     def interpret(self, line):
         """
         Save the line after removing invisible white space.
-        If the line completes a paragraph, return the paragraph.
+        If the line completes a paragraph, parse it and reset it.
         """
         self.paragraph += line.rstrip() + '\n'
         if self.paragraph.endswith('\n\n'):
-            self.paragraph = scan(self.paragraph)
-            self.paragraph = tokenize(self.paragraph)
-            self.paragraph = parse(self.paragraph)
-            return self.flush()
+            lexemes = scan(self.paragraph)
+            tokens = tokenize(lexemes, self.topics)
+            tree = parse(tokens)
+            topic = get_topic(tree[0])
+            self.topics[str(topic)] = topic
+            self.paragraph = ''
+            return generate(tree), warn(tree)
