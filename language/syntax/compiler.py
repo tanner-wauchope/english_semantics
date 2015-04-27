@@ -1,7 +1,21 @@
-from warnings import warn_explicit
+import sys
 
-from language.discourse import Discourse
+from language.syntax.discourse import Discourse
 
+
+def print_exception(exception, path, line):
+    template = (
+        'file {path}, line {line}\n'
+        '{type}: {description}'
+    )
+    message = template.format(
+        path=path,
+        line=line,
+        type=type(exception),
+        description=exception.message,
+    )
+    print(message, file=sys.stderr)
+    exit()
 
 class Compiler:
     """
@@ -23,9 +37,9 @@ class Compiler:
         """
         with open(self.path) as source:
             for i, line in enumerate(source):
-                interpretation, warning = self.discourse.interpret(line)
+                interpretation = self.discourse.interpret(line)
                 if interpretation:
-                    yield interpretation, i, warning
+                    yield i, interpretation
         raise StopIteration
 
     def run(self):
@@ -33,8 +47,9 @@ class Compiler:
         Write each interpretable unit of the target code.
         """
         with open(self.path + '.py', 'w') as target:
-            for interpretation, line, warning in self.interpretations():
-                print(str(interpretation), file=target, end='')
-                if warning:
-                    warn_explicit(warning, SyntaxWarning, self.path, line)
+            for line, interpretation in self.interpretations():
+                if isinstance(interpretation, Exception):
+                    print_exception(interpretation, self.path, line)
+                else:
+                    print(str(interpretation), file=target, end='')
         print('Compilation succeeded.')

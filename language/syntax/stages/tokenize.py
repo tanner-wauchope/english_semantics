@@ -1,5 +1,5 @@
-import language.syntax as syntax
-from language.syntax.primitives import number, quote, possessive, topic
+from language.syntax.word_classes import keywords
+from language.syntax.word_classes import number, possessive, quote, topic
 
 
 class Token:
@@ -36,7 +36,7 @@ def define(lexeme, word_class, subtopics):
     """
     Create a token and save new subtopics.
     :param lexeme: a token that is possibly a subtopic
-    :param subtopics: map of variables in this paragraph to subtopics
+    :param subtopics: map of word_classes in this paragraph to subtopics
     :return: a token with the specified lexeme and word class
     """
     token = Token(lexeme, word_class)
@@ -48,8 +48,8 @@ def define(lexeme, word_class, subtopics):
 def lookup(lexeme, subtopics, topics):
     """
     :param lexeme: an non-punctuated, non-numeric lexeme
-    :param subtopics: map of variables in this paragraph to word classes
-    :param topics: map of variables in previous paragraphs to word classes
+    :param subtopics: map of word_classes in this paragraph to word classes
+    :param topics: map of word_classes in previous paragraphs to word classes
     :return: a word class
     """
     name = lexeme.lower()
@@ -57,8 +57,8 @@ def lookup(lexeme, subtopics, topics):
         return subtopics[name]
     elif name in topics:
         return topics[name].word_class
-    elif hasattr(syntax, name + '_'):
-        return getattr(syntax, name + '_')
+    elif name in keywords:
+        return keywords[name]
     raise NameError(name + ' must be alphabetical.')
 
 
@@ -66,7 +66,7 @@ def tokenize(paragraph, topics):
     """
     Replaces the lexemes in the paragraph with tokens.
     :param paragraph: sentences that contain lines that contain lexemes
-    :param topics: map of variables to previously discussed topics
+    :param topics: map of word_classes to previously discussed topics
     :return: sentences that contain lines that contain tokens
     """
     subtopics = {}

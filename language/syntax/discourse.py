@@ -1,5 +1,5 @@
-from language.syntax import scan, tokenize, parse, generate, warn
-from language.syntax.primitives.topic import Topic
+from .stages import scan, tokenize, parse, generate_code, warn
+from .word_classes.topic import Topic
 
 
 def get_topic(tree):
@@ -7,12 +7,21 @@ def get_topic(tree):
     :param tree: a binary tree of constituencies
     :return: the first topic found by depth-first search
     """
-    if tree.head.word_class is Topic:
+    if isinstance(tree, Topic):
         return tree
     elif tree.specifier:
         return get_topic(tree.specifier)
     elif tree.complement:
         return get_topic(tree.complement)
+
+
+def interpret(english, topics={}):
+    lexemes = scan(english)
+    tokens = tokenize(lexemes, topics)
+    tree = parse(tokens)
+    topic = get_topic(tree[0])
+    topics[str(topic)] = topic
+    return generate_code(tree)
 
 
 class Discourse:
@@ -39,10 +48,6 @@ class Discourse:
         """
         self.paragraph += line.rstrip() + '\n'
         if self.paragraph.endswith('\n\n'):
-            lexemes = scan(self.paragraph)
-            tokens = tokenize(lexemes, self.topics)
-            tree = parse(tokens)
-            topic = get_topic(tree[0])
-            self.topics[str(topic)] = topic
+            interpretation = interpret(self.paragraph, self.topics)
             self.paragraph = ''
-            return generate(tree), warn(tree)
+            return interpretation

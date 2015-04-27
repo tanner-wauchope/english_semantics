@@ -1,6 +1,18 @@
-from language.syntax.parse import Word
-from language.syntax.variables import Noun
-from language.syntax.verbs import Verb
+from language.syntax.word import Word
+
+
+keywords = (
+    'zero',
+    'one',
+    'two',
+    'three',
+    'four',
+    'five',
+    'six',
+    'seven',
+    'eight',
+    'nine',
+)
 
 
 def match(text):
@@ -19,9 +31,9 @@ class Number(Word):
     The word class of spelled numbers and lexemes that can be cast as a float.
     """
     def specifies_word_classes(self):
-        """ Numbers can precede variables. """
-        return [Noun]
+        """ Numbers can precede word_classes. """
+        return ('Noun')
 
-    def complements_word_class(self):
+    def complements_word_classes(self):
         """ Numbers can follow verbs. """
-        return [Verb]
+        return ('Verb')

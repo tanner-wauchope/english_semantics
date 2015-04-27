@@ -1,6 +1,6 @@
 import warnings
 
-from language.syntax.variables import Noun
+from language.syntax.word_classes import Noun
 
 def is_singular(noun):
     return isinstance(noun, SingularNoun)

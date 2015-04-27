@@ -1,4 +1,4 @@
-from language.syntax.primitives import quote
+from language.syntax.word_classes import quote
 
 
 def quote_split(text):

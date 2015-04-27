@@ -1,33 +1,25 @@
-from language.syntax.primitives.topic import Topic
+from language.syntax.word_classes.topic import Topic
+from language.syntax.word_classes import word_classes
 
 
-class Word:
+def first(tree):
     """
-    The parse node for a word.
-    The node may have a specifier or a complement.
-    See http://www.academia.edu/868478.
+    :param tree: a binary tree of constituencies
+    :return: the left-most node in the tree
     """
-    def __init__(self, head, specifier=None, complement=None):
-        """
-        :param head: a token that heads the constituency
-        :param specifier: an optional left child
-        :param complement: an optional right child
-        """
-        self.head = head
-        self.specifier = specifier
-        self.complement = complement
+    if not tree.specifier:
+        return tree
+    return first(tree.specifier)
 
-    def specifies_word_classes(self):
-        """
-        :return: the word classes that this word class specifies
-        """
-        raise NotImplementedError
 
-    def complements_word_class(self):
-        """
-        :return: the word classes that this word class complements
-        """
-        raise NotImplementedError
+def last(tree):
+    """
+    :param tree: a binary tree of constituencies
+    :return: the right-most node in the tree
+    """
+    if not tree.complement:
+        return tree
+    return last(tree.complement)
 
 
 class PhrasesCannotMerge(Exception):
@@ -45,9 +37,11 @@ def specifies(tree, other):
     :param other: a second binary tree of constituencies
     :return: the first word class the the first tree specifies
     """
-    for word_class in tree.specifies_word_classes():
+    for name in tree.specifies_word_classes():
+        word_class = word_classes[name]
         if isinstance(other, word_class):
             return word_class
+
 
 def complements(tree, other):
     """
@@ -55,21 +49,28 @@ def complements(tree, other):
     :param other: a second binary tree of constituencies
     :return: the first word class the the second tree complements
     """
-    for word_class in other.complements_word_classes():
+    for name in other.complements():
+        word_class = word_classes(name)
         if isinstance(tree, word_class):
             return word_class
 
 
 def merge(tree, other):
     """
-    :param tree: a binary tree composed of constituencies
-    :param other: a second binary tree of constituencies
-    :return: a catena that subsumes these trees
+    :param tree: a dependency tree of words
+    :param other: a dependency tree of words
+    :return: one of the trees, except with the other tree added as a subtree
     """
-    if not last(tree).complement and other.complements(tree):
+    if last(tree).complemented_by(other):
         last(tree).complement = other
         return tree
-    elif not first(other).specifier and tree.specifies(other):
+    elif tree.specifies(first(other)):
+        first(other).specifier = tree
+        return other
+    elif other.complements(last(tree)):
+        last(tree).complement = other
+        return tree
+    elif first(other).specified_by(tree):
         first(other).specifier = tree
         return other
     raise PhrasesCannotMerge([tree, other])
@@ -90,7 +91,6 @@ def merge_or_move(tree, other):
 def create_constituency(token, tree):
     """
     Reassign the token's word class based on the tree if its class is variable.
-    :param constituency: a constituency that might need a word class
     :param tree: a binary tree composed of constituencies
     :return: an instantiation of the token's word class
     """
@@ -106,7 +106,7 @@ def garden_path(tokens):
     """
     tree = create_constituency(tokens.pop(0), None)
     while tokens:
-        constituency = create_constituency(tokens.pop(0))
+        constituency = create_constituency(tokens.pop(0), tree)
         try:
             tree = merge(tree, constituency)
         except PhrasesCannotMerge:

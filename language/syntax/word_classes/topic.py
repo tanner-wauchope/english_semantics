@@ -1,4 +1,4 @@
-from language.syntax.parse import Word
+from language.syntax.stages.parse import Word
 
 
 def match(text):
@@ -11,20 +11,22 @@ def match(text):
     return opens and closes and text.coun("'") is 2
 
 
-class UnknownWordClass(Exception):
-    """
-    Raised when parsing a word whose class has not been inferred.
-    """
-
-
 class Topic(Word):
     """
     The place holder word class for alphabetic lexemes whose class is unknown.
     """
+    def complemented_by_word_classes(self):
+        """ This method should never be called. """
+        raise NotImplementedError
+
     def specifies_word_classes(self):
         """ This method should never be called. """
-        raise UnknownWordClass
+        raise NotImplementedError
 
-    def complements_word_class(self):
+    def complements_word_classes(self):
         """ This method should never be called. """
-        raise UnknownWordClass
+        raise NotImplementedError
+
+    def specified_by_word_classes(self):
+        """ This method should never be called. """
+        raise NotImplementedError

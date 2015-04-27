@@ -1,5 +1,4 @@
-from language.syntax.parse import Word
-from language.syntax.variables import Noun
+from language.syntax.word import Word
 
 
 def match(text):
@@ -16,9 +15,6 @@ class Possessive(Word):
     The word class of any alphabetic lexemes ending with "'" or "'s".
     """
     def specifies_word_classes(self):
-        """ Possessives precede variables. """
-        return [Noun]
+        """ Possessives precede word_classes. """
+        return ('Noun')
 
-    def complements_word_class(self):
-        """ Possessives do not complement anything. """
-        return []

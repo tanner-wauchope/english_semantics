@@ -7,7 +7,7 @@ def specifier(tree):
              nothing is returned if there is no left branch
     """
     if tree.specifier:
-        return generate(tree.specifier) + '.'
+        return generate_code(tree.specifier) + '.'
     return ''
 
 
@@ -18,13 +18,13 @@ def complement(tree):
              nothing is returned if there is no right branch
     """
     if tree.complement:
-        return '(' + generate(tree.complement) + ')'
+        return '(' + generate_code(tree.complement) + ')'
     return ''
 
 
-def generate(tree):
+def generate_code(tree):
     """
     :param tree: a binary tree composed on constituencies
     :return: python whose execution tree mimics the input tree
     """
-    return specifier(tree) + tree.head + complement(tree)
+    return specifier(tree) + tree.head + '_' + complement(tree)

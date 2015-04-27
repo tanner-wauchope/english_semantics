@@ -1,4 +1,4 @@
-from language.syntax.parse import Word
+from language.syntax.stages.parse import Word
 from language.semantics import Noun, Verb
 
 class Preposition(Word):

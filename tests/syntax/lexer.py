@@ -1,6 +1,8 @@
 from unittest import TestCase
 
-from language.syntax.tokenize import STRING, NUMBER, WORD, split_by_unquoted_whitespace, tokenize
+from language.syntax.stages.tokenize import STRING, NUMBER, WORD, split_by_unquoted_whitespace
+from language.syntax.stages import tokenize
+
 
 class TestLexer(TestCase):
     def test_string_valid(self):

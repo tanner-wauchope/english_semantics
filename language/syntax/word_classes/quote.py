@@ -1,6 +1,4 @@
-from language.syntax.parse import Word
-from language.syntax.variables import Noun
-from language.syntax.verbs import Verb
+from language.syntax.word import Word
 
 
 def match(text):
@@ -17,12 +15,8 @@ class Quote(Word):
     """
     The word class of any alphabetic lexemes wrapped in '"'.
     """
-    def specifies_word_classes(self):
-        """ Quotes do not specify anything. """
-        return []
-
-    def complements_word_class(self):
-        """ Quotes follow variables or verbs. """
-        return [Noun, Verb]
+    def complements_word_classes(self):
+        """ Quotes follow nouns or verbs. """
+        return ('Noun', 'Verb')
 
 
