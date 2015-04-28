@@ -1,4 +1,4 @@
-from .stages import scan, tokenize, parse, generate_code, warn
+from .stages import scan, tokenize, parse, codify, warn
 from .word_classes.topic import Topic
 
 
@@ -21,7 +21,7 @@ def interpret(english, topics={}):
     tree = parse(tokens)
     topic = get_topic(tree[0])
     topics[str(topic)] = topic
-    return generate_code(tree)
+    return codify(tree)
 
 
 class Discourse:
