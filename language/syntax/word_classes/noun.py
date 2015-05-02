@@ -8,6 +8,14 @@ keywords = (
 )
 
 
+def match(lexeme):
+    """
+    If a token is otherwise uncategorizable,
+    assume it is a noun if it is alphabetic and capitalized.
+    """
+    return lexeme.isalpha() and lexeme.istitle()
+
+
 class Noun(Word):
     """
     The word class of alphabetic lexemes in positions that specify word_classes.

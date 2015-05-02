@@ -8,10 +8,10 @@ def quote_split(text):
     """
     lexemes = ['']
     for character in text:
-        is_word = lexemes[-1].startswith('"')
-        if character != ' ' or not is_word:
+        opened_quote = lexemes[-1].startswith('"')
+        if character != ' ' or opened_quote:
             lexemes[-1] += character
-        if character == ' ' and is_word or quote.match(lexemes[-1]):
+        if character == ' ' and not opened_quote or quote.match(lexemes[-1]):
             lexemes.append('')
     return lexemes
 
@@ -19,7 +19,7 @@ def quote_split(text):
 def punctuation_split(text, delimiter):
     """
     :param text: text to be split into segments
-    :param delimiter: text that ends each segment
+    :param delimiter: text that delimits each segment
     :return: non-whitespace segments
     """
     result = []
@@ -40,5 +40,5 @@ def scan(block):
         for line in punctuation_split(sentence, ',\n\t'):
             sentences[-1].append([])
             for lexeme in quote_split(line):
-                sentences[-1][-1].append((lexeme))
+                sentences[-1][-1].append(lexeme)
     return sentences

@@ -7,6 +7,14 @@ keywords = (
 )
 
 
+def match(lexeme):
+    """
+    If a token is otherwise uncategorizable,
+    assume it is a verb if it is alphabetic and lowercase.
+    """
+    return lexeme.isalpha() and lexeme.islower()
+
+
 class Verb(Word):
     """
     The word class of alphabetic lexemes in positions that specify verbs.
