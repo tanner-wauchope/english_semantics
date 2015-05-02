@@ -3,18 +3,17 @@ import sys
 from language.syntax.discourse import Discourse
 
 
-def print_exception(exception, path, line):
-    template = (
+def handle_error(path, line, error):
+    message = (
         'file {path}, line {line}\n'
         '{type}: {description}'
-    )
-    message = template.format(
+    ).format(
         path=path,
         line=line,
-        type=type(exception),
-        description=exception.message,
+        type=type(error),
+        description=error.message,
     )
-    print(message, file=sys.stderr)
+    print(message, sys.stderr)
     exit()
 
 class Compiler:
@@ -47,9 +46,10 @@ class Compiler:
         Write each interpretable unit of the target code.
         """
         with open(self.path + '.py', 'w') as target:
+            print('"from language import *"\n', file=target)
             for line, interpretation in self.interpretations():
                 if isinstance(interpretation, Exception):
-                    print_exception(interpretation, self.path, line)
+                    handle_error(self.path, line, interpretation)
                 else:
                     print(str(interpretation), file=target, end='')
         print('Compilation succeeded.')

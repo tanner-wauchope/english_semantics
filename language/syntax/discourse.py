@@ -1,45 +1,25 @@
-from .stages import scan, tokenize, parse, codify, warn
-from .word_classes.topic import Topic
+from .stages import scan, tokenize, parse, codify
 
 
-def get_topic(tree):
-    """
-    :param tree: a binary tree of constituencies
-    :return: the first topic found by depth-first search
-    """
-    if isinstance(tree, Topic):
-        return tree
-    elif tree.specifier:
-        return get_topic(tree.specifier)
-    elif tree.complement:
-        return get_topic(tree.complement)
-
-
-def interpret(english, topics={}):
-    lexemes = scan(english)
-    tokens = tokenize(lexemes, topics)
-    tree = parse(tokens)
-    topic = get_topic(tree[0])
-    topics[str(topic)] = topic
-    return codify(tree)
+def interpret(english):
+    try:
+        lexemes = scan(english)
+        tokens = tokenize(lexemes)
+        trees = parse(tokens)
+        return codify(trees)
+    except Exception as e:
+        return e
 
 
 class Discourse:
     """
-    A discourse maintains inter-block state during interpretation.
-    It tracks topics defined in previous paragraphs.
-    It also keeps track of lines that have not yet formed a complete paragraph.
+    Keeps track of lines that have not yet formed a complete paragraph
     """
     def __init__(self):
         """
-        Initialize a dictionary to hold the topics of previous paragraphs.
         Initialize a buffer to hold lines of an incomplete paragraph.
-        Expose language keywords to the Python runtime environment.
         """
-        self.topics = {}
         self.paragraph = ''
-        self.interpret('"from language import *"\n')
-        self.interpret('\n')
 
     def interpret(self, line):
         """
@@ -48,6 +28,6 @@ class Discourse:
         """
         self.paragraph += line.rstrip() + '\n'
         if self.paragraph.endswith('\n\n'):
-            interpretation = interpret(self.paragraph, self.topics)
+            interpretation = interpret(self.paragraph)
             self.paragraph = ''
             return interpretation
