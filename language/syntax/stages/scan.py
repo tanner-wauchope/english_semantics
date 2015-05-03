@@ -1,15 +1,59 @@
 
+class InvalidParagraph(SyntaxError):
+    """
+    Raised when a paragraph does not end with a period.
+    """
+    pass
+
+
+class InvalidSentence(SyntaxError):
+    """
+    Raised when a paragraph contains more lines the clauses.
+    """
+    pass
+
+
+class InvalidClause(SyntaxError):
+    """
+    Raised when a line starts with a quote or has unclosed quotes.
+    """
+    pass
+
+
+def validate_paragraph(paragraph):
+    """
+    Checks if the paragraph ends with a period.
+    :param paragraph: text that may contain possessives or embedded quotes
+    """
+    if not paragraph.endswith('.\n'):
+        raise InvalidParagraph('A paragraph should end with a period')
+
+
+def validate_sentence(sentence):
+    """
+    Checks that the sentence contains more lines that clauses.
+    :param sentence: a sentence that may be spread across multiple lines
+    """
+    if len(split(sentence, '\n')) is not len(split(sentence, ',\n\t')):
+        raise InvalidSentence('Contains more lines than clauses')
+
+
+def validate_clause(clause):
+    """
+    Checks if the line starts with a quote or has unclosed quotes.
+    :param clause: text that may contain possessives or embedded quotes
+    """
+    if clause.startswith('"'):
+        raise InvalidClause('Clause starts with a quote')
+    elif clause.count('"') % 2 == 1:
+        raise InvalidClause('Clause missing quotation mark')
+
+
 def split(text, delimiter):
     segments = text.split(delimiter)
-    if segments and segments[0].isspace():
-        segments = segments[1:]
-    if segments and segments[-1].isspace():
+    if segments and not segments[-1].strip():
         segments = segments[:-1]
     return segments
-
-
-def validate_phrase(phrase):
-    pass
 
 
 def words(phrase):
@@ -17,57 +61,42 @@ def words(phrase):
     :param phrase: text lacking quotes but possibly having possessives
     :return: a list of words, including clitics
     """
-    lexemes = []
+    result = []
     for lexeme in split(phrase, ' '):
         try:
             noun, clitic = lexeme.split("'")
-            lexemes.append(noun)
-            lexemes.append("'" + clitic)
+            result.append(noun)
+            result.append("'" + clitic)
         except ValueError:
-            lexemes.append(lexeme)
-    return lexemes
-
-def validate_line(line):
-    """
-    Checks if the line starts with a quote or has an odd number of quotes.
-    :param line: text that may contain possessives or embedded quotes
-    """
-    if line.startswith('"'):
-        raise SyntaxError('Lines should not start with a double-quote')
-    elif line.count('"') % 2 == 1:
-        raise SyntaxError('Lines should not an odd number of double-quotes')
+            result.append(lexeme)
+    return result
 
 
-def lexemes(line):
+def lexemes(clause):
     """
-    :param line: text that may contain possessives or embedded quotes
+    :param clause: text that may contain possessives or embedded quotes
     :return: a list of lexemes, which are words or quotes
     """
-    validate_line(line)
-    lexemes = []
-    for i, segment in enumerate(split(line, '"')):
+    result = []
+    for i, segment in enumerate(split(clause, '"')):
         if i % 2 == 0:
-            lexemes.extend(words(segment))
+            result.extend(words(segment))
         else:
-            lexemes.append('"' + segment + '"')
-    return lexemes
-
-
-def validate_sentence(sentence):
-    number_of_lines = len(split(sentence, '\n'))
-    number_of_phrases = len(split(sentence, ',\n\t'))
-    if number_of_lines is not number_of_phrases:
-        raise SyntaxError('Number of lines is not number of phrases')
+            result.append('"' + segment + '"')
+    return result
 
 
 def scan(paragraph):
     """
-    :param paragraph: a text whose lines do not have trailing whitespace
+    :param paragraph: text without empty lines or invisible whitespace
     :return: sentences that contain lines that contain lexemes
     """
+    validate_paragraph(paragraph)
     sentences = []
     for sentence in split(paragraph, '.\n'):
+        validate_sentence(sentence)
         sentences.append([])
-        for line in sentence.split(',\n\t'):
-            sentences[-1].append(lexemes(line))
+        for clause in sentence.split(',\n\t'):
+            validate_clause(clause)
+            sentences[-1].append(lexemes(clause))
     return sentences

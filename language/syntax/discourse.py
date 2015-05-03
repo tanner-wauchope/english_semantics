@@ -26,8 +26,10 @@ class Discourse:
         Save the line after removing invisible white space.
         If the line completes a paragraph, parse it and reset it.
         """
-        self.paragraph += line.rstrip() + '\n'
-        if self.paragraph.endswith('\n\n'):
+        self.paragraph += line.rstrip()
+        if line.isspace():
             interpretation = interpret(self.paragraph)
             self.paragraph = ''
             return interpretation
+        else:
+            self.paragraph += '\n'
