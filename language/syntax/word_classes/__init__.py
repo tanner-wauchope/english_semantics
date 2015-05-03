@@ -1,5 +1,7 @@
 from types import ModuleType
+
 from . import (
+    clitic,
     complementizer,
     determiner,
     noun,
@@ -7,7 +9,7 @@ from . import (
     possessive,
     quote,
     subordinating_conjunction,
-    topic,
+    variable,
     verb,
 )
 
@@ -18,6 +20,3 @@ for name, module in dict(locals()).items():
         class_name = name.title().replace('_', '')
         word_class = getattr(module, class_name)
         word_classes[class_name] = word_class
-        if hasattr(module, 'keywords'):
-            for keyword in module.keywords:
-                keywords[keyword] = word_class

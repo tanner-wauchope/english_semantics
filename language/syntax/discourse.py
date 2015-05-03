@@ -2,6 +2,11 @@ from .stages import scan, tokenize, parse, codify
 
 
 def interpret(english):
+    """
+    :param english: English text to be interpreted
+    :return: a syntax tree or list of syntax trees if the English is valid
+             an Exception object if the English was invalid
+    """
     try:
         lexemes = scan(english)
         tokens = tokenize(lexemes)

@@ -1,12 +1,11 @@
-from plain_english.language.syntax.word_classes import (
-    keywords,
-    number,
-    possessive,
-    quote,
-    topic,
-    noun,
-    verb,
-)
+from plain_english.language.syntax.word_classes import word_classes
+
+
+class InvalidToken(Exception):
+    """
+    Raised when a lexeme cannot be classified.
+    """
+    pass
 
 
 def classify(lexeme):
@@ -14,21 +13,13 @@ def classify(lexeme):
     :param lexeme: a lexeme that is possibly punctuated or numeric
     :return: the word class of the lexeme
     """
-    if number.match(lexeme):
-        return number.Number
-    elif quote.match(lexeme):
-        return quote.Quote
-    elif possessive.match(lexeme):
-        return possessive.Possessive
-    elif topic.match(lexeme):
-        return topic.Topic
-    elif lexeme in keywords:
-        return keywords[lexeme]
-    elif noun.match(lexeme):
-        return noun.Noun
-    elif verb.match(lexeme):
-        return verb.Verb
-    raise NameError(lexeme + ' is not a valid token.')
+    for word_class in word_classes.values():
+        if lexeme.lower() in word_class.KEYWORDS:
+            return word_class
+    for word_class in word_classes.values():
+        if word_class.match(lexeme):
+            return word_class
+    raise InvalidToken(lexeme + ' is not a valid token.')
 
 
 def tokenize(paragraph):

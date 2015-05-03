@@ -1,20 +1,19 @@
 from plain_english.language.syntax.word import Word
 
 
-keywords = (
-    'if',
-    'while',
-)
-
-
 class SubordinatingConjunction(Word):
     """
     The word class of keywords like "if".
     """
+    KEYWORDS = {
+        'if',
+        'while',
+    }
+
     def complemented_by_word_classes(self):
         """ Subordinators are complemented by verbs. """
-        return ('Verb')
+        return {'Verb'}
 
     def specified_by_word_classes(self):
         """ Subordinators are specified by verbs. """
-        return ('Verb')
+        return {'Verb'}
