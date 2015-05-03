@@ -1,38 +1,36 @@
 from language.syntax.word import Word
 
 
-def subordinate(tree, quote):
+def subordinate(tree):
     """
     :param tree: a binary tree composed of constituencies
     :return: python whose execution tree mimics the abstract syntax tree
     """
-    result = tree.head + '_'
+    result = tree.head.replace("'", '_') + '_'
     if tree.specifier and tree.specifier.index < tree.complement.index:
-        result = result + codify(tree.specifier, quote) + '.'
+        result = result + subordinate(tree.specifier) + '.'
     if tree.complement:
-        result += '(' + quote + codify(tree.complement, '\\"') + quote + ')'
+        result += '(' + subordinate(tree.complement) + ')'
     if tree.specifier and tree.specifier.index > tree.complement.index:
-        result += '(' + quote + codify(tree.complement, '\\"') + quote + ')'
+        result += '(\n\t' + subordinate(tree.complement) + ')'
     return result
 
 
-def coordinate(block, quote):
+def coordinate(block):
     """
-    :param tree: a list of syntax trees
-    :return: python that coordinates the syntax trees
+    :param block: a list of syntax trees
+    :return: lazy python that coordinates the syntax trees
     """
     conjoins = []
     for tree in block:
-        conjoins.append(codify(tree, quote))
-    return '_(' + quote + ',\n\t'.join(conjoins) + quote + ')'
+        conjoins.append(subordinate(tree))
+    return '_(\n\t"' + ',\n\t'.join(conjoins) + ',")'
 
-
-def codify(english, quote='"'):
+def codify(trees):
     """
-    :param english: a syntax tree or a list of syntax trees
-    :return: python that represents the block or fragment
+    :param trees: a list of syntax trees
+    :return: python that represents the tree or list of trees
     """
-    if isinstance(english, list):
-        return coordinate(english, quote)
-    elif isinstance(english, Word):
-        return subordinate(english, quote)
+    if len(trees) is 1:
+        return subordinate(trees[0])
+    return coordinate(trees)
