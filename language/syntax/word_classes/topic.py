@@ -1,4 +1,4 @@
-from language.syntax.stages.parse import Word
+from plain_english.language.syntax.word import Word
 
 
 def match(text):

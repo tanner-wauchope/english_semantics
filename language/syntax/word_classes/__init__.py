@@ -13,9 +13,9 @@ from . import (
 
 word_classes = {}
 keywords = {}
-for name, module in locals():
+for name, module in dict(locals()).items():
     if isinstance(module, ModuleType) and not name.startswith('_'):
-        class_name = name.title()
+        class_name = name.title().replace('_', '')
         word_class = getattr(module, class_name)
         word_classes[class_name] = word_class
         if hasattr(module, 'keywords'):

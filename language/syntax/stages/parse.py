@@ -1,4 +1,4 @@
-from language.syntax.word_classes import word_classes
+from plain_english.language.syntax.word_classes import word_classes
 
 
 def first(tree):

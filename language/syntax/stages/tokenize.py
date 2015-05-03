@@ -1,4 +1,4 @@
-from language.syntax.word_classes import (
+from plain_english.language.syntax.word_classes import (
     keywords,
     number,
     possessive,

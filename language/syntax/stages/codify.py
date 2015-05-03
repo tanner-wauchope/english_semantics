@@ -1,6 +1,3 @@
-from language.syntax.word import Word
-
-
 def subordinate(tree):
     """
     :param tree: a binary tree composed of constituencies

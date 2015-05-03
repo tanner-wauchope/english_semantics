@@ -1,4 +1,4 @@
-from language.syntax.word import Word
+from plain_english.language.syntax.word import Word
 
 
 keywords = (
@@ -7,7 +7,7 @@ keywords = (
 )
 
 
-class Subordinator(Word):
+class SubordinatingConjunction(Word):
     """
     The word class of keywords like "if".
     """
