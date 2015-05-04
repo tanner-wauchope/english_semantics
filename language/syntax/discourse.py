@@ -1,4 +1,7 @@
-from .stages import scan, tokenize, parse, codify
+from .scan import scan
+from .tokenize import tokenize
+from .parse import parse
+from .codify import codify
 
 
 def interpret(english):

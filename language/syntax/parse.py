@@ -1,4 +1,11 @@
-from plain_english.language.syntax.word_classes import word_classes
+
+class PhrasesCannotMerge(Exception):
+    """
+    Thrown when two phrases cannot be merged.
+    The first phrase cannot specify the second,
+    and the second phrase cannot complement the first.
+    """
+    pass
 
 
 def first(tree):
@@ -21,56 +28,34 @@ def last(tree):
     return last(tree.complement)
 
 
-class PhrasesCannotMerge(Exception):
+def contains(word_classes, word):
     """
-    Thrown when two phrases cannot be merged.
-    The first phrase cannot specify the second,
-    and the second phrase cannot complement the first.
+    :param word_class: a set of word classes
+    :param word: a word that could be an instance of the word classes
+    :return: whether the word is an instance of any of the word classes
     """
-    pass
-
-
-def specifies(tree, other):
-    """
-    :param tree: a binary tree composed of constituencies
-    :param other: a second binary tree of constituencies
-    :return: the first word class the the first tree specifies
-    """
-    for name in tree.specifies_word_classes():
-        word_class = word_classes[name]
-        if isinstance(other, word_class):
-            return word_class
-
-
-def complements(tree, other):
-    """
-    :param tree: a binary tree composed of constituencies
-    :param other: a second binary tree of constituencies
-    :return: the first word class the the second tree complements
-    """
-    for name in other.complements():
-        word_class = word_classes[name]
-        if isinstance(tree, word_class):
-            return word_class
+    for word_class in word_classes:
+        if isinstance(word, word_class):
+            return True
 
 
 def merge(tree, other):
     """
     Minimal attachment takes precedence over late closure.
-    :param tree: a dependency tree of words
-    :param other: a dependency tree of words
+    :param tree: a binary-branching dependency tree of words
+    :param other: a binary-branching dependency tree of words
     :return: one of the trees, except with the other tree added as a subtree
     """
-    if last(tree).complemented_by(other):
+    if contains(last(tree).COMPLEMENTED_BY, other):
         last(tree).complement = other
         return tree
-    elif tree.specifies(first(other)):
+    elif contains(tree.SPECIFIES, first(other)):
         first(other).specifier = tree
         return other
-    elif other.complements(last(tree)):
+    elif contains(other.COMPLEMENTS, last(tree)):
         last(tree).complement = other
         return tree
-    elif first(other).specified_by(tree):
+    elif contains(first(other).SPECIFIED_BY, tree):
         first(other).specifier = tree
         return other
     raise PhrasesCannotMerge([tree, other])

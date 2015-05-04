@@ -1,4 +1,6 @@
-from plain_english.language.syntax.word_classes import word_classes
+import re
+
+from plain_english.language.syntax.word import Word
 
 
 class InvalidToken(Exception):
@@ -13,11 +15,11 @@ def classify(lexeme):
     :param lexeme: a lexeme that is possibly punctuated or numeric
     :return: the word class of the lexeme
     """
-    for word_class in word_classes.values():
+    for word_class in Word.subclasses():
         if lexeme.lower() in word_class.KEYWORDS:
             return word_class
-    for word_class in word_classes.values():
-        if word_class.match(lexeme):
+    for word_class in Word.subclasses():
+        if re.match(word_class.PATTERN + '$', lexeme):
             return word_class
     raise InvalidToken(lexeme + ' is not a valid token.')
 
