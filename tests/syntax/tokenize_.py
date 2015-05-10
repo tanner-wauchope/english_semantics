@@ -17,7 +17,7 @@ def test_classify_valid():
     assert classify('7') == categories.Number
     assert classify('its') == categories.Possessive
     assert classify('"abc"') == categories.Quote
-    assert classify('if') == categories.SubordinatingConjunction
+    assert classify('if') == categories.Subordinator
     assert classify('X') == categories.Variable
     assert classify('has') == categories.Verb
 

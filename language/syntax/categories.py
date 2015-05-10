@@ -46,8 +46,7 @@ class Number(Word):
         'five', 'six', 'seven', 'eight', 'nine',
     }
     PATTERN = r"[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?"
-    SPECIFIES = {'Noun'}
-    COMPLEMENTS = {'Verb'}
+    COMPLEMENTS = {'Verb', 'Noun'}
 
 
 class Possessive(Word):
@@ -61,11 +60,11 @@ class Quote(Word):
     The class for embedded quotations.
     The regular expression is from http://stackoverflow.com/questions/249791
     """
-    COMPLEMENTS = {'Noun', 'Verb'}
     PATTERN = r'"(?:[^"\\]|\\.)*"'
+    COMPLEMENTS = {'Noun', 'Verb'}
 
 
-class SubordinatingConjunction(Word):
+class Subordinator(Word):
     """ The class of words that begin a subordinate clause. """
     KEYWORDS = {'if', 'while'}
     COMPLEMENTED_BY = {'Verb'}
@@ -92,5 +91,3 @@ for cls in Word.__subclasses__():
     cls.SPECIFIES = {eval(name) for name in cls.SPECIFIES}
     cls.COMPLEMENTS = {eval(name) for name in cls.COMPLEMENTS}
     cls.SPECIFIED_BY = {eval(name) for name in cls.SPECIFIED_BY}
-
-
