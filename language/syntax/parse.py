@@ -61,30 +61,19 @@ def merge(tree, other):
     raise PhrasesCannotMerge([tree, other])
 
 
-def move(tree, other):
-    """
-    :param tree: a binary tree of tokens
-    :param other: a second binary tree of tokens
-    :return: an out-of-order merge of the trees
-    """
-    return merge(other, tree)
-
-
-def garden_path(tokens, combine=merge):
+def garden_path(tokens):
     """
     :param tokens: a list of tokens
     :return: a binary syntax tree and any symbols that couldn't be assimilated
     """
-    tree = tokens.pop(0)
-    while tokens:
-        token = tokens.pop(0)
+    trees = tokens[:1]
+    for token in tokens[1:]:
         try:
-            tree = merge(tree, token)
+            trees[-1] = merge(trees[-1], token)
+            trees = garden_path(trees)
         except PhrasesCannotMerge:
-            tokens.insert(0, token)
-            fork, tokens = garden_path(tokens)
-            tree = combine(tree, fork)
-    return tree, tokens
+            trees.append(token)
+    return trees
 
 
 def parse(block):
@@ -97,5 +86,5 @@ def parse(block):
         clauses = []
         for clause in sentence:
             clauses.append(garden_path(clause)[0])
-        sentences.append(garden_path(clauses, move)[0])
+        sentences.append(clauses)
     return sentences

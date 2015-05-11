@@ -41,3 +41,15 @@ class Word:
             self.complement == other.complement
         )
 
+    def __str__(self):
+        """
+        :return: the english that this tree represents
+        """
+        result = ''
+        if self.specifier:
+            result = str(self.specifier) + ' '
+        result += self.head
+        if self.complement:
+            result += ' ' + str(self.complement)
+        return result
+

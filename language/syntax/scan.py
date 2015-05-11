@@ -63,12 +63,11 @@ def words(phrase):
     """
     result = []
     for lexeme in split(phrase, ' '):
-        try:
-            noun, clitic = lexeme.split("'")
-            result.append(noun)
-            result.append("'" + clitic)
-        except ValueError:
-            result.append(lexeme)
+        parts = lexeme.split("'")
+        result.append(parts[0])
+        for part in parts[1:]:
+            if part:
+                result.append("'" + part)
     return result
 
 

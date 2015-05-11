@@ -15,7 +15,6 @@ from plain_english.language.syntax.parse import (
     last,
     contains,
     merge,
-    move,
     garden_path,
     parse,
 )
@@ -94,19 +93,9 @@ def test_merge_specified_by():
     assert actual == expected
 
 
-def test_move():
-    antecedent = Verb('is', specifier=Noun('it'))
-    consequent = Verb('has', specifier=Noun('it'))
-    subordinate_clause = Subordinator('if', complement=antecedent)
-    actual = move(subordinate_clause, consequent)
-    expected = Subordinator('if', specifier=consequent, complement=antecedent)
-    assert actual == expected
-
-
 def test_garden_path_clause():
     words = [Noun('it'), Verb('has'), Determiner('the'), Noun('quote')]
-    actual, leftover = garden_path(words)
-    assert leftover == []
+    actual = garden_path(words)[0]
     expected = Verb(
         'has',
         specifier=Noun('it'),
@@ -117,10 +106,10 @@ def test_garden_path_clause():
     )
     assert actual == expected
 
+
 def test_garden_path_complementizer():
     words = [Noun('number'), Determiner('the'), Noun('quote'), Verb('has')]
-    actual, leftover = garden_path(words)
-    assert leftover == []
+    actual = garden_path(words)[0]
     expected = Noun(
         'number',
         complement=Verb(
@@ -134,7 +123,7 @@ def test_garden_path_complementizer():
     assert actual == expected
 
 
-def test_parse():
+def test_parse_single_clause():
     paragraph = [
         [
             [
@@ -148,7 +137,7 @@ def test_parse():
             ]
         ]
     ]
-    tree = parse(paragraph)[0]
+    actual = parse(paragraph)[0][0]
     expected = Verb(
         'has',
         specifier=Noun(
@@ -161,4 +150,24 @@ def test_parse():
             specifier=Determiner('a')
         )
     )
-    assert tree == expected
+    assert actual == expected
+
+
+def test_parse_multiple_clause():
+    paragraph = [
+        [
+            [
+                Subordinator('if'),
+                Noun('it'),
+                Verb('is'),
+            ],
+            [
+                Noun('it'),
+                Verb('has'),
+            ]
+        ]
+    ]
+    actual = parse(paragraph)[0]
+    antecedent = Subordinator('if', complement=Verb('is', specifier=Noun('it')))
+    consequent = Verb('has', specifier=Noun('it'))
+    assert actual == [antecedent, consequent]
