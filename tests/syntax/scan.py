@@ -35,7 +35,7 @@ def test_split():
 
 
 def test_words():
-    assert words("word's plural") == ['word', "'s", 'plural']
+    assert words("word's 'plural' form") == ['word', "'s", "'plural'", 'form']
 
 
 def test_lexemes():

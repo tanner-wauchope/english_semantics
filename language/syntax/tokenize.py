@@ -19,7 +19,8 @@ def classify(lexeme):
         if lexeme.lower() in word_class.KEYWORDS:
             return word_class
     for word_class in Word.subclasses():
-        if re.match(word_class.PATTERN + '$', lexeme):
+        pattern = word_class.PATTERN
+        if pattern and re.match(pattern + '$', lexeme):
             return word_class
     raise InvalidToken(lexeme + ' is not a valid token.')
 
@@ -37,6 +38,8 @@ def tokenize(paragraph):
             tokens[-1].append([])
             for lexeme in line:
                 word_class = classify(lexeme)
+                if word_class.__name__ == 'Complementizer':
+                    print(lexeme)
                 token = word_class(lexeme)
                 tokens[-1][-1].append(token)
     return tokens

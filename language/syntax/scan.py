@@ -59,15 +59,16 @@ def split(text, delimiter):
 def words(phrase):
     """
     :param phrase: text lacking quotes but possibly having possessives
-    :return: a list of words, including clitics
+    :return: a list of words and clitics
     """
     result = []
     for lexeme in split(phrase, ' '):
-        parts = lexeme.split("'")
-        result.append(parts[0])
-        for part in parts[1:]:
-            if part:
-                result.append("'" + part)
+        if "'" in lexeme and not lexeme[0] == "'" and not lexeme[-1] == "'":
+            parts = lexeme.split("'")
+            result.append(parts[0])
+            result.append("'" + parts[1])
+        else:
+            result.append(lexeme)
     return result
 
 

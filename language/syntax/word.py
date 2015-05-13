@@ -5,7 +5,7 @@ class Word:
     For more info on dependency trees, see http://www.academia.edu/868478.
     """
     KEYWORDS = {}
-    PATTERN = ''
+    PATTERN = None
     COMPLEMENTED_BY = {}
     SPECIFIES = {}
     COMPLEMENTS = {}
@@ -17,6 +17,7 @@ class Word:
         Loads the subclass definitions if they are not already loaded.
         :return: a list of all the word classes
         """
+        from plain_english.language.syntax import categories
         return cls.__subclasses__()
 
     def __init__(self, head, specifier=None, complement=None):
@@ -52,4 +53,3 @@ class Word:
         if self.complement:
             result += ' ' + str(self.complement)
         return result
-

@@ -1,3 +1,5 @@
+import pytest
+
 from plain_english.language.syntax.categories import (
     Clitic,
     Complementizer,
@@ -11,6 +13,7 @@ from plain_english.language.syntax.categories import (
 )
 from plain_english.language.syntax.word import Word
 from plain_english.language.syntax.parse import (
+    PhrasesCannotMerge,
     first,
     last,
     contains,
@@ -93,6 +96,11 @@ def test_merge_specified_by():
     assert actual == expected
 
 
+def test_merge_error():
+    with pytest.raises(PhrasesCannotMerge):
+        assert merge(Subordinator('if'), Noun('it'))
+
+
 def test_garden_path_clause():
     words = [Noun('it'), Verb('has'), Determiner('the'), Noun('quote')]
     actual = garden_path(words)[0]
@@ -171,3 +179,16 @@ def test_parse_multiple_clause():
     antecedent = Subordinator('if', complement=Verb('is', specifier=Noun('it')))
     consequent = Verb('has', specifier=Noun('it'))
     assert actual == [antecedent, consequent]
+
+
+def test_parse_error():
+    paragraph = [
+        [
+            [
+                Subordinator('if'),
+                Noun('it'),
+            ],
+        ]
+    ]
+    with pytest.raises(PhrasesCannotMerge):
+        parse(paragraph)

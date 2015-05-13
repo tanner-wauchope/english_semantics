@@ -64,7 +64,7 @@ def merge(tree, other):
 def garden_path(tokens):
     """
     :param tokens: a list of tokens
-    :return: a binary syntax tree and any symbols that couldn't be assimilated
+    :return: a list of syntax trees
     """
     trees = tokens[:1]
     for token in tokens[1:]:
@@ -85,6 +85,14 @@ def parse(block):
     for sentence in block:
         clauses = []
         for clause in sentence:
-            clauses.append(garden_path(clause)[0])
+            new = garden_path(clause)
+            if len(new) > 1:
+                print('\n\n\n')
+                import pprint
+                pp = pprint.PrettyPrinter(indent=4)
+                pp.pprint([str(node) for node in new])
+                raise PhrasesCannotMerge(new)
+            else:
+                clauses.append(new[0])
         sentences.append(clauses)
     return sentences

@@ -30,6 +30,8 @@ def test_classify_invalid():
         classify("abc_abc")
     with pytest.raises(InvalidToken):
         classify("'abc'abc")
+    with pytest.raises(InvalidToken):
+        classify('')
 
 
 def test_tokenize():

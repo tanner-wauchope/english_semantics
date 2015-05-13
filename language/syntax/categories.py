@@ -55,6 +55,13 @@ class Possessive(Word):
     SPECIFIES = {'Noun'}
 
 
+class Preposition(Word):
+    """ The class of arithmetic operators and other prepositions. """
+    KEYWORDS = {'plus', 'minus', 'times', 'over', 'of'}
+    COMPLEMENTED_BY = {'Noun', 'Number', 'Variable'}
+    COMPLEMENTS = {'Noun', 'Number', 'Variable'}
+
+
 class Quote(Word):
     """
     The class for embedded quotations.
@@ -74,7 +81,8 @@ class Subordinator(Word):
 class Variable(Word):
     """ The class of words that represent algebraic variables. """
     PATTERN = r"[A-Z]"
-    COMPLEMENTS = {'Noun'}
+    SPECIFIES = {'Verb'}
+    COMPLEMENTS = {'Noun', 'Verb'}
 
 
 class Verb(Word):
