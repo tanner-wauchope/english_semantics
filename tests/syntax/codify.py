@@ -49,7 +49,7 @@ def test_coordinate_clauses():
     expected = (
         '(\n'
         '\t\t"it.is_",\n'
-        '\t\t"it.has")\n'
+        '\t\t"it.has")'
     )
     assert actual == expected
 
@@ -63,7 +63,7 @@ def test_coordinate_sentences():
     expected = (
         "(\n"
         "\t'''it.is_''',\n"
-        "\t'''it.has''')\n"
+        "\t'''it.has''')"
     )
     assert actual == expected
 
@@ -81,7 +81,7 @@ def test_codify_sentence():
     actual = codify([antecedent, consequent])
     expected = (
         'if_(it.is_)(\n'
-        '\t\t"it.has")\n'
+        '\t\t"it.has")'
     )
     assert actual == expected
 
@@ -95,6 +95,5 @@ def test_codify_paragraph():
     expected = (
         "it.is_(\n"
         "\t'''it.has''')\n"
-        "\n"
     )
     assert actual == expected
