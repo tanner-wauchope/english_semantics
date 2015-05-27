@@ -1,0 +1,5 @@
+the Console shows X, Y, and Z that maximize "-2X - 3Y - 4Z" and satisfy:
+
+    3X + 2Y + Z = 10
+    2X + 5Y + 3Z = 15
+    X, Y, Z >= 0

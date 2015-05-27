@@ -36,5 +36,5 @@ def make_property(complement):
 
 
 def have(subject, complement):
-    attribute_name = str(complement).lower().replace(' ', '_')
+    attribute_name = str(complement)
     setattr(subject, attribute_name, make_property(complement))

@@ -1,3 +1,31 @@
+import re
+
+from .nouns import Noun, Query
+from .the import the
+from .all_ import all_
+
+
+class IndefiniteArticle:
+    def __init__(self):
+        self.nouns = {}
+
+    def __getattr__(self, item):
+        if item in self.nouns:
+            noun = self.nouns[item]
+            instance = noun.references.copy()
+            the.instances[noun].add(instance)
+            return Query(noun, instance)
+        elif re.match(r"_[A-Z][a-z]+_$", item):
+            noun = Noun()
+            name = item[1:-1]
+            self.nouns[name] = noun
+            all_.nouns[regular_plural(name)] = noun
+            all_.nouns[semi_regular_plural(name)] = noun
+            return noun
+        raise NameError(item)
+
+a = an = IndefiniteArticle()
+
 
 def regular_plural(singular):
     if singular.endswith('h'):
@@ -32,4 +60,3 @@ def semi_regular_plural(singular):
         return singular[:-2] + 'i'
     elif singular.endswith('x'):
         return singular[:-1] + 'ces'
-
