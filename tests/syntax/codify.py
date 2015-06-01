@@ -14,6 +14,7 @@ from plain_english.language.syntax.codify import (
     codify,
 )
 
+
 def test_head():
     assert head(Noun("'Factorial'")) == 'Factorial_'
     assert head(Clitic("'s")) == 's'
@@ -62,8 +63,8 @@ def test_coordinate_sentences():
     actual = coordinate(sentences, '\t', "'''")
     expected = (
         "(\n"
-        "\t'''it.is_''',\n"
-        "\t'''it.has''')"
+        "\tit.is_,\n"
+        "\tit.has)"
     )
     assert actual == expected
 
@@ -81,7 +82,7 @@ def test_codify_sentence():
     actual = codify([antecedent, consequent])
     expected = (
         'if_(it.is_)(\n'
-        '\t\t"it.has")'
+        '\t\tit.has)'
     )
     assert actual == expected
 
@@ -94,6 +95,6 @@ def test_codify_paragraph():
     actual = codify(paragraph)
     expected = (
         "it.is_(\n"
-        "\t'''it.has''')\n"
+        "\tit.has)\n"
     )
     assert actual == expected

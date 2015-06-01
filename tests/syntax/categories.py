@@ -1,44 +1,44 @@
-from re import compile
+from re import match
 
-QUOTE = compile(r'"(?:[^"\\]|\\.)*"')
-NUMBER = compile(r"[+-]?\d+(\.\d+)?")
-WORD = compile(r"[-a-zA-Z]+")
+from plain_english.language.syntax.categories import Quote, Number
 
 
-def quote_valid(self):
+def test_quote_valid():
+    pattern = Quote.PATTERN + '$'
     # Empty quotes
-    assert QUOTE.match('""')
+    assert match(pattern, '""')
     # Whitespace
-    assert QUOTE.match('" \t\n "')
+    assert match(pattern, '" \t\n "')
     # Escaped double quotes
-    assert QUOTE.match(r'" \" "')
+    assert match(pattern, r'" \" "')
     # Single quotes
-    assert QUOTE.match('''" ' "''')
+    assert match(pattern, '''" ' "''')
     # Letters, numbers, and punctuation
-    assert QUOTE.match('" abc, 123. "')
+    assert match(pattern, '" abc, 123. "')
 
-def quote_invalid(self):
+def test_quote_invalid():
+    pattern = Quote.PATTERN + '$'
     # Empty strings
-    assert not QUOTE.match('')
+    assert not match(pattern, '')
     # Unquoted string
-    assert not QUOTE.match('abc')
+    assert not match(pattern, 'abc')
     # Strings missing an opening double quote
-    assert not QUOTE.match('abc"')
+    assert not match(pattern, 'abc"')
     # Strings missing a closing double quote
-    assert not QUOTE.match(r'"abc')
+    assert not match(pattern, r'"abc')
 
-def number_valid(self):
+def test_number_valid():
+    pattern = Number.PATTERN + '$'
     # Leading and trailing zeros
-    assert NUMBER.match('000.000')
+    assert match(pattern, '000.000')
     # Positive decimals with a leading whole number
-    assert NUMBER.match('123.123')
+    assert match(pattern, '123.123')
     # Negative decimals with a leading whole number
-    assert NUMBER.match('-123.123')
+    assert match(pattern, '-123.123')
 
-def number_invalid(self):
+def test_number_invalid():
+    pattern = Number.PATTERN + '$'
     # Empty strings
-    assert not NUMBER.match('')
-    # Numbers with a trailing decimal
-    assert not NUMBER.match('123.')
+    assert not match(pattern, '')
     # Numbers with multiple decimal points
-    assert not NUMBER.match('123.123.123')
+    assert not match(pattern, '123.123.123')
