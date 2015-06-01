@@ -1,4 +1,4 @@
-from plain_english.language.semantics.verbs import Clause, Verb
+from plain_english.language.pragmatics.verbs import Clause, Verb
 
 
 class RunOnComplementizer(Exception):

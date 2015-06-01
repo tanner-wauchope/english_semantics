@@ -39,16 +39,17 @@ def subordinate(tree):
     return result
 
 
-def coordinate(elements, indent):
+def coordinate(elements, indent, quote_mark=''):
     """
     :param elements: a list of speech elements
     :param indent: the indentation of each line of python after the first
-    :return: python that coordinates the elements
+    :quote_mark: the quotation marks used to make the coordination lazy
+    :return: lazy python that coordinates the elements
     """
     if elements:
         conjoins = []
         for element in elements:
-            conjoins.append(codify(element))
+            conjoins.append(quote_mark + codify(element) + quote_mark)
         return '(\n' + indent + (',\n' + indent).join(conjoins) + ')'
     return '()'
 
@@ -59,7 +60,7 @@ def codify(english):
     :return: python that represents the english
     """
     if isinstance(english, list) and isinstance(english[0], list):
-        return codify(english[0]) + coordinate(english[1:], '\t') + '\n'
+        return codify(english[0]) + coordinate(english[1:], '\t', "'''") + '\n'
     elif isinstance(english, list):
-        return subordinate(english[0]) + coordinate(english[1:], '\t\t')
+        return subordinate(english[0]) + coordinate(english[1:], '\t\t', '"')
     return subordinate(english)
