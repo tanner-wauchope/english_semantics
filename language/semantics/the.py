@@ -1,20 +1,18 @@
 import collections
 
-from .all_ import all_
-from .a import a
-from.nouns import Query
+from.nouns import Set
+
 
 class DefiniteArticle:
-    def __init__(self):
-        self.instances = collections.defaultdict(set)
+    def __init__(self, all_):
+        self.all_ = all_
+        self.instances = collections.defaultdict(Set)
 
     def __getattr__(self, item):
-        if item in all_.nouns:
-            declension = all_.nouns[item]
-            return Query(declension, self.instances[declension])
-        elif item in a.nouns:
-            declension = a.nouns[item]
-            return Query(declension, self.instances[declension])
+        if item in self.all_.nouns:
+            declension = self.all_.nouns[item]
+            return Set(declension, self.instances[declension], -1)
+        elif item in self.instances:
+            declension = self.declensions[item]
+            return Set(declension, self.instances[declension], -1)
         raise NameError(item)
-
-the = DefiniteArticle()
