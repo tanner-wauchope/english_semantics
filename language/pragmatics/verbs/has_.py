@@ -1,3 +1,44 @@
+from . import Verb
+
+
+def procedure(self, subject, complement):
+    """
+    param complement: a Group or a callable complement-retriever
+    When the key used to lookup a value from the prototype
+    dictionary is a verb, the result is a set of instances
+    or a function
+    """
+    subject.noun.prototype[self][complement.noun] = complement
+
+has_ = Verb('has_', procedure)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def make_getter(name, cases, domain):
     def getter(self):
         if self.satsifies(domain):

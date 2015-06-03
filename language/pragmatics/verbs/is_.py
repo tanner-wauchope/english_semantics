@@ -1,3 +1,54 @@
+from . import Verb
+
+
+class FaultyAssignment(Exception):
+    pass
+
+
+def procedure(self, subject, complement):
+    """
+    When a verb is used as a key into the predicate dictionary,
+    the result is a primitive (set, number, string, etc)
+    """
+    if not subject.instances and not complement.instances:
+        subject.noun.prototype = complement.noun.prototype.copy()
+    elif subject.instances and not complement.instances:
+        for instance in subject.instances:
+            assert type(instance) == complement.noun
+    elif subject.instances and complement.primitive:
+        for instance in subject.instances:
+            instance.predicates[self] = complement
+    raise FaultyAssignment((subject, complement))
+
+is_ = Verb('is_', procedure)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class Relationship:
