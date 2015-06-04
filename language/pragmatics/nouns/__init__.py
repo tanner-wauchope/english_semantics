@@ -13,6 +13,14 @@ class Noun:
             return self.predicates[verb].complements[noun]
 
 
+def new_subclass(cls, name, Hypernym=Noun):
+    class NewNoun(Hypernym):
+        group = None
+    NewNoun.group = Group(noun=NewNoun)
+    NewNoun.__name__ = name
+    return NewNoun
+
+
 class Group:
     def __init__(self, instances=None, start=None, noun=None):
         self.instances = instances or []

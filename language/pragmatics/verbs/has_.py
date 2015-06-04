@@ -1,16 +1,19 @@
 from . import Verb
 
-
-def procedure(self, subject, complement):
+def possessive(self, subject, complement):
     """
     param complement: a Group or a callable complement-retriever
     When the key used to lookup a value from the prototype
     dictionary is a verb, the result is a set of instances
     or a function
     """
-    subject.noun.prototype[self][complement.noun] = complement
+    if not subject.instances and not complement.instances:
+        subject.noun.prototype[self][complement.noun] = complement
+    elif subject.instances and not complement.instances:
+        for member in complement.instances:
+            member.predicates[self][complement.noun] = complement
 
-has_ = Verb('has_', procedure)
+has_ = Verb('has_', possessive)
 
 
 

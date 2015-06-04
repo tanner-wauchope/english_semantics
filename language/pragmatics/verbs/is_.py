@@ -1,26 +1,26 @@
 from . import Verb
+from plain_english.language.pragmatics.nouns import new_subclass
 
 
 class FaultyAssignment(Exception):
     pass
 
 
-def procedure(self, subject, complement):
+def copula(self, subject, complement):
     """
     When a verb is used as a key into the predicate dictionary,
     the result is a primitive (set, number, string, etc)
     """
     if not subject.instances and not complement.instances:
-        subject.noun.prototype = complement.noun.prototype.copy()
+        subject.noun = new_subclass(subject.noun.__name__, complement.noun)
     elif subject.instances and not complement.instances:
         for instance in subject.instances:
-            assert type(instance) == complement.noun
-    elif subject.instances and complement.primitive:
-        for instance in subject.instances:
-            instance.predicates[self] = complement
+            assert isinstance(instance, complement.noun)
+    elif not subject.instances and issubclass(complement.noun, subject.noun):
+        subject.instances = subject.instances
     raise FaultyAssignment((subject, complement))
 
-is_ = Verb('is_', procedure)
+is_ = Verb('is_', copula)
 
 
 
