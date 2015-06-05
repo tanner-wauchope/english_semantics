@@ -7,10 +7,10 @@ def possessive(self, subject, complement):
     dictionary is a verb, the result is a set of instances
     or a function
     """
-    if not subject.instances and not complement.instances:
+    if not subject.members and not complement.members:
         subject.noun.prototype[self][complement.noun] = complement
-    elif subject.instances and not complement.instances:
-        for member in complement.instances:
+    elif subject.members and not complement.members:
+        for member in complement.members:
             member.predicates[self][complement.noun] = complement
 
 has_ = Verb('has_', possessive)

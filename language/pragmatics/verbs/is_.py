@@ -9,15 +9,15 @@ class FaultyAssignment(Exception):
 def copula(self, subject, complement):
     """
     When a verb is used as a key into the predicate dictionary,
-    the result is a primitive (set, number, string, etc)
+    the result is a primitives (set, number, string, etc)
     """
-    if not subject.instances and not complement.instances:
+    if not subject.members and not complement.members:
         subject.noun = new_subclass(subject.noun.__name__, complement.noun)
-    elif subject.instances and not complement.instances:
+    elif subject.members and not complement.members:
         for instance in subject.instances:
             assert isinstance(instance, complement.noun)
-    elif not subject.instances and issubclass(complement.noun, subject.noun):
-        subject.instances = subject.instances
+    elif not subject.members and issubclass(complement.noun, subject.noun):
+        subject.members = subject.members
     raise FaultyAssignment((subject, complement))
 
 is_ = Verb('is_', copula)

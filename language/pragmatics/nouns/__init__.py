@@ -13,22 +13,22 @@ class Noun:
             return self.predicates[verb].complements[noun]
 
 
-def new_subclass(cls, name, Hypernym=Noun):
+def new_subclass(cls, name, Hypernym=Noun, prototype=None):
     class NewNoun(Hypernym):
-        group = None
-    NewNoun.group = Group(noun=NewNoun)
+        prototype = Hypernym.prototype.copy()
+    NewNoun.prototype.update(prototype)
     NewNoun.__name__ = name
     return NewNoun
 
 
 class Group:
     def __init__(self, instances=None, start=None, noun=None):
-        self.instances = instances or []
+        self.members = instances or []
         self.start = start
         self.noun = noun or type(instances[0])
 
     def __getattr__(self, item):
-        return Clause(self.instances, self.noun.prototype[item])
+        return Clause(self.members, self.noun.prototype[item])
 
     def __call__(self, clause):
         if clause.subject:

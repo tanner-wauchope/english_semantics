@@ -1,6 +1,6 @@
 import re
 
-from language.pragmatics.nouns import new_subclass
+from language.pragmatics.nouns import new_subclass, Group
 
 
 class IndefiniteArticle:
@@ -10,10 +10,10 @@ class IndefiniteArticle:
     def __getattr__(self, item):
         if item in self.scope:
             noun = self.scope[item].noun
-            self.scope[item].instances.append(noun())
+            self.scope[item].members.append(noun())
             return noun.group
         elif re.match(r"_[A-Z][a-z]+_$", item):
             noun = new_subclass(item[1:-1])
-            self.scope[item[1:-1]] = noun.group
-            return noun.group
+            self.scope[item[1:-1]] = Group(noun=noun)
+            return Group(noun=noun)
         raise NameError(item)
