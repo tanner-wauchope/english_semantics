@@ -1,4 +1,4 @@
-from plain_english.language.pragmatics.verbs import Clause
+from plain_english.pragmatics.verbs import Clause
 
 
 class Noun:

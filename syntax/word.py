@@ -17,7 +17,6 @@ class Word:
         Loads the subclass definitions if they are not already loaded.
         :return: a list of all the word classes
         """
-        from plain_english.language.syntax import categories
         return cls.__subclasses__()
 
     def __init__(self, head, specifier=None, complement=None):

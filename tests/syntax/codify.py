@@ -1,4 +1,4 @@
-from plain_english.language.syntax.categories import (
+from syntax.categories import (
     Clitic,
     Determiner,
     Noun,
@@ -7,7 +7,7 @@ from plain_english.language.syntax.categories import (
     Variable,
     Verb,
 )
-from plain_english.language.syntax.codify import (
+from syntax.codify import (
     head,
     subordinate,
     coordinate,

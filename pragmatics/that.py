@@ -1,4 +1,4 @@
-from plain_english.language.pragmatics.verbs import Clause
+from .verbs import Clause
 
 
 class Complementizer:

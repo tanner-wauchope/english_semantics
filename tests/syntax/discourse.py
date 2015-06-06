@@ -1,4 +1,4 @@
-from plain_english.language.syntax.discourse import (
+from syntax.discourse import (
     interpret,
     Discourse,
 )

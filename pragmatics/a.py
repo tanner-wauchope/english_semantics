@@ -1,6 +1,6 @@
 import re
 
-from language.pragmatics.nouns import new_subclass, Group
+from .nouns import new_subclass, Group
 
 
 class IndefiniteArticle:

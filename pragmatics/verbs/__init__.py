@@ -1,6 +1,6 @@
 import types
 
-from plain_english.language.pragmatics import new_scope
+from plain_english.pragmatics import new_scope
 
 
 class Verb:

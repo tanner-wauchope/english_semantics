@@ -1,5 +1,6 @@
 import pytest
-from plain_english.language.syntax.scan import (
+
+from syntax.scan import (
     InvalidParagraph,
     InvalidSentence,
     InvalidClause,

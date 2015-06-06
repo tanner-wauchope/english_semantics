@@ -1,6 +1,6 @@
 import re
 
-from plain_english.language.syntax.word import Word
+from syntax.word import Word
 
 
 class InvalidToken(Exception):

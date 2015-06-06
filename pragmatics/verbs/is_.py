@@ -1,5 +1,5 @@
 from . import Verb
-from plain_english.language.pragmatics.nouns import new_subclass
+from plain_english.pragmatics.nouns import new_subclass
 
 
 class FaultyAssignment(Exception):

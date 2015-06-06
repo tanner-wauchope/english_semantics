@@ -1,6 +1,6 @@
 import pytest
 
-from plain_english.language.syntax.categories import (
+from syntax.categories import (
     Clitic,
     Complementizer,
     Determiner,
@@ -11,8 +11,8 @@ from plain_english.language.syntax.categories import (
     Variable,
     Verb,
 )
-from plain_english.language.syntax.word import Word
-from plain_english.language.syntax.parse import (
+from syntax.word import Word
+from syntax.parse import (
     PhrasesCannotMerge,
     first,
     last,
