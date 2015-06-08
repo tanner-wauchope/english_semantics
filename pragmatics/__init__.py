@@ -1,14 +1,12 @@
-from .a import IndefiniteArticle
-from .the import DefiniteArticle
-from .every import Distributor
-from .nouns.entity import Entity
-from .nouns.primitives.quote import Quote
-from .nouns.primitives.number import Number
+from plain_english.pragmatics import nouns
+from plain_english.pragmatics.content_words import quote, number
+from plain_english.pragmatics.function_words import a, every, that, the
 
-def new_scope(scope):
-    scope['a'] = IndefiniteArticle(scope)
-    scope['the'] = DefiniteArticle(scope)
-    scope['every'] = Distributor(scope)
-    scope['Entity'] = Entity
-    scope['Quote'] = Quote
-    scope['Number'] = Number
+
+def populate_scope(scope):
+    scope['a'] = a.IndefiniteArticle(scope)
+    scope['the'] = the.DefiniteArticle(scope)
+    scope['every'] = every.Distributor(scope)
+    scope['Quote'] = nouns.Group(noun=quote.Quote, scope=scope)
+    scope['Number'] = nouns.Group(noun=number.Number, scope=scope)
+    scope['that'] = that.Complementizer()

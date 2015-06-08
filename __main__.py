@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from os.path import getmtime
 
-from .syntax.compiler import Compiler
+from syntax.compiler import Compiler
 
 
 def get_file(help_message):

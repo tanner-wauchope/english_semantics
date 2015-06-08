@@ -1,0 +1,12 @@
+a 'Greeter' has a 'Greeting'.
+the Greeting is a Quote.
+
+a Greeter 'greets' a Entity.
+the Greeter says the Greeting it has.
+the Greeter says the Name the Entity has.
+
+
+a Greeter and an Entity come.
+the Greeting the Greeter has is "Hello ".
+the Name the Entity has is "World ".
+the Greeter greets the Entity.

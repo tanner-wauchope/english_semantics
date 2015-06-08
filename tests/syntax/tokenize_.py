@@ -1,7 +1,7 @@
 import pytest
 
-from syntax import categories
-from syntax.tokenize import (
+from plain_english.syntax import categories
+from plain_english.syntax.tokenize import (
     InvalidToken,
     classify,
     tokenize,

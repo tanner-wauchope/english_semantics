@@ -1,4 +1,4 @@
-from syntax.categories import (
+from plain_english.syntax.categories import (
     Clitic,
     Determiner,
     Noun,
@@ -7,12 +7,12 @@ from syntax.categories import (
     Variable,
     Verb,
 )
-from syntax.codify import (
+from plain_english.syntax.codify import (
     head,
     subordinate,
     coordinate,
-    codify,
 )
+from plain_english.syntax.codify import codify
 
 
 def test_head():
@@ -43,8 +43,8 @@ def test_subordinate():
 
 def test_coordinate_clauses():
     clauses = [
-        [Verb('is', specifier=Noun('it'))],
-        [Verb('has', specifier=Noun('it'))],
+        Verb('is', specifier=Noun('it')),
+        Verb('has', specifier=Noun('it')),
     ]
     actual = coordinate(clauses, '\t\t', '"')
     expected = (
@@ -63,8 +63,8 @@ def test_coordinate_sentences():
     actual = coordinate(sentences, '\t', "'''")
     expected = (
         "(\n"
-        "\tit.is_,\n"
-        "\tit.has)"
+        "\t'''it.is_()''',\n"
+        "\t'''it.has()''')"
     )
     assert actual == expected
 
@@ -82,7 +82,7 @@ def test_codify_sentence():
     actual = codify([antecedent, consequent])
     expected = (
         'if_(it.is_)(\n'
-        '\t\tit.has)'
+        '\t\t"it.has")'
     )
     assert actual == expected
 
@@ -95,6 +95,8 @@ def test_codify_paragraph():
     actual = codify(paragraph)
     expected = (
         "it.is_(\n"
-        "\tit.has)\n"
+        "\t'''it.has()''')\n"
     )
+    print(actual)
+    print(expected)
     assert actual == expected

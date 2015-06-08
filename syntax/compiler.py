@@ -1,6 +1,6 @@
 import sys
 
-from syntax.discourse import Discourse
+from .discourse import Discourse
 
 
 def handle_error(path, line, error):

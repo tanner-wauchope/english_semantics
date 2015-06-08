@@ -1,6 +1,6 @@
-from .scan import scan
 from .tokenize import tokenize
-from syntax import parse
+from .parse import parse
+from .scan import scan
 from .codify import codify
 
 

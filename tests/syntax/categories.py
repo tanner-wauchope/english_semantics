@@ -1,6 +1,6 @@
 from re import match
 
-from syntax.categories import Quote, Number
+from plain_english.syntax.categories import Quote, Number
 
 
 def test_quote_valid():

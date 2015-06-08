@@ -1,4 +1,4 @@
-from syntax.discourse import (
+from plain_english.syntax.discourse import (
     interpret,
     Discourse,
 )
@@ -11,10 +11,10 @@ otherwise,
 """
 
 factorial_python = """a.Number(N).has(a.Factorial_)(
-\tif_(N.is_(0))(
-\t\tthe.Factorial.is_(1)),
-\totherwise(
-\t\tit.is_(N(times(the.Factorial(of(N(minus(1)))))))))
+\t'''if_(N.is_(0))(
+\t\t"the.Factorial.is_(1)")''',
+\t'''otherwise(
+\t\t"it.is_(N(times(the.Factorial(of(N(minus(1)))))))")''')
 """
 
 

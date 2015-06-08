@@ -1,6 +1,6 @@
 import pytest
 
-from syntax.scan import (
+from plain_english.syntax.scan import (
     InvalidParagraph,
     InvalidSentence,
     InvalidClause,
@@ -10,8 +10,8 @@ from syntax.scan import (
     split,
     words,
     lexemes,
-    scan,
 )
+from plain_english.syntax.scan import scan
 
 
 def test_validate_paragraph():
