@@ -2,7 +2,11 @@ from plain_english.pragmatics.nouns import Noun
 from plain_english.pragmatics.verbs import Verb
 
 
-class FaultyAssignment(Exception):
+class ContradictionError(Exception):
+    pass
+
+
+class TypeError(Exception):
     pass
 
 
@@ -10,23 +14,23 @@ class Entity(Noun):
     prototype = {}
 
 
-def copula(self, subject, complement):
-    """
-    When a verb is used as a key into the predicate dictionary,
-    the result is a primitives (set, number, string, etc)
-    """
-    if not subject.members and not complement.members:
+class Copula(Verb):
+    def run(self, subject, complement):
+        """ what if the complement is primitive? """
+        if issubclass(complement.noun, subject.noun):
+            package = [sender.value for sender in complement.members]
+            for receiver in subject.members:
+                if receiver.value and receiver.value != package:
+                    raise ContradictionError((receiver.value, package))
+                receiver.values = package
+        raise TypeError((subject, complement))
+
+    def define(self, subject, complement, support_sentences):
         name = subject.noun.__name__
         prototype = subject.noun.prototype
         subject.noun = complement.noun.new_subclass(name, prototype)
-    elif subject.members and not complement.members:
-        for instance in subject.instances:
-            assert isinstance(instance, complement.noun)
-    elif not subject.members and issubclass(complement.noun, subject.noun):
-        subject.members = subject.members
-    raise FaultyAssignment((subject, complement))
 
-Entity.prototype['is_'] = Verb('is_', copula)
+Entity.prototype['is_'] = Copula('is_')
 
 
 def possessive(self, subject, complement):
