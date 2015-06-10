@@ -6,19 +6,15 @@ class ContradictionError(Exception):
     pass
 
 
-class TypeError(Exception):
-    pass
-
-
 class Entity(Noun):
     prototype = {}
 
 
 class Copula(Verb):
     def run(self, subject, complement):
-        """ what if the complement is primitive? """
         if issubclass(complement.noun, subject.noun):
-            package = [sender.value for sender in complement.members]
+            sets = [sender.values for sender in complement.members]
+            package = set.union(*sets)
             for receiver in subject.members:
                 if receiver.value and receiver.value != package:
                     raise ContradictionError((receiver.value, package))
@@ -28,22 +24,19 @@ class Copula(Verb):
     def define(self, subject, complement, support_sentences):
         name = subject.noun.__name__
         prototype = subject.noun.prototype
-        subject.noun = complement.noun.new_subclass(name, prototype)
+        noun = complement.noun.new_subclass(name, prototype)
+        subject.scope[subject.noun.__name__] = noun
 
 Entity.prototype['is_'] = Copula('is_')
 
 
-def possessive(self, subject, complement):
-    """
-    param complement: a Group or a callable complement-retriever
-    When the key used to lookup a value from the prototype
-    dictionary is a verb, the result is a set of instances
-    or a function
-    """
-    if not subject.members and not complement.members:
-        subject.noun.prototype[self].complements[complement.noun] = complement
-    elif subject.members and not complement.members:
-        for member in complement.members:
-            member.predicates[self].complements[complement.noun] = complement
+class Possessive(Verb):
+    def run(self, subject, complement):
+        for member in subject.members:
+            current = member.possessions.get(complement.noun)
+            if current and current != complement:
+                raise ContradictionError
+            member.possessions[complement.noun] = complement
 
-Entity.prototype['has_'] = Verb('has_', possessive)
+
+Entity.prototype['has_'] = Possessive('has_')
