@@ -1,6 +1,8 @@
-from plain_english.pragmatics import nouns
-from plain_english.pragmatics.content_words import text, number
-from plain_english.pragmatics.function_words import a, every, that, the
+from plain_english.pragmatics.text import text
+from plain_english.pragmatics.numbers import number
+from plain_english.semantics import nouns
+from plain_english.semantics.function_words import a, that, the
+from plain_english.semantics.function_words import every
 
 
 def populate_scope(scope):

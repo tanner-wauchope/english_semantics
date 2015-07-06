@@ -1,6 +1,6 @@
 import re
 
-from plain_english.pragmatics import verbs
+from plain_english.semantics import verbs
 
 
 class Noun:
@@ -34,15 +34,10 @@ class Group:
 
     def __getattr__(self, item):
         if re.match(r"_[a-z]+_$", item):
-            self.noun.prototype[item] = verbs.Verb(item[-1:1])
+            verb = verbs.Verb(item[-1:1])
+            self.noun.prototype[item] = verb
         verb = self.noun.prototype[item]
         return verbs.Clause(self.members, verb)
-
-    def __call__(self, clause):
-        if clause.subject:
-            return self.query_for_complement(clause)
-        else:
-            return self.query_for_subject(clause)
 
     def __eq__(self, other):
         return self.members == other.members
@@ -53,18 +48,24 @@ class Group:
         result.start = self.start
         return result
 
-    def query_for_complement(self, clause):
+    def __call__(self, clause):
+        if clause.subject:
+            return self.apply_relative_verb_to_subject(clause)
+        else:
+            return self.apply_relative_verb_to_complement(clause)
+
+    def apply_relative_verb_to_subject(self, clause):
         """
-        :param clause: a clause whose complement is to be queried
+        :param clause: a relative clause with a subject
         :return: an empty wrapper if the query returns no complements
                  a wrapper of the query's last complement otherwise
         """
         members = clause.subject.query(clause.verb, self.noun)
         return Group(self.scope, members[self.start:])
 
-    def query_for_subject(self, clause):
+    def apply_relative_verb_to_complement(self, clause):
         """
-        :param clause: a clause whose subject is to be queried
+        :param clause: a relative clause with a complement
         :return: an empty wrapper if the query returns no subjects
                  a wrapper of the query's subjects otherwise
         """

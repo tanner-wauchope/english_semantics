@@ -1,5 +1,5 @@
-from plain_english.pragmatics.nouns import Noun
-from plain_english.pragmatics.verbs import Verb
+from plain_english.semantics.nouns import Noun
+from plain_english.semantics.verbs import Verb
 
 
 class ContradictionError(Exception):

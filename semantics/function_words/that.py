@@ -1,4 +1,4 @@
-from plain_english.pragmatics import verbs
+from plain_english.semantics import verbs
 
 
 class Complementizer:

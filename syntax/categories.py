@@ -29,7 +29,7 @@ class Determiner(Word):
 
 class Noun(Word):
     """ Open class for capitalized, alphabetic, multi-character lexemes. """
-    KEYWORDS = {'it', 'number', 'quote'}
+    KEYWORDS = {'it', 'numbers', 'quote'}
     PATTERN = r"'?[A-Z][a-z]+'?"
     SPECIFIES = {'Verb'}
     COMPLEMENTS = {'Verb'}
