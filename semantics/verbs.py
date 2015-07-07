@@ -1,16 +1,31 @@
 
+"""
+Since there are many prepositions, I would prefer to not be opinionated about
+their meanings. Instead, they can all be defined in terms of related verbs.
+
+Prepositions bind outside of introductory clauses will follow late closure.
+Consequently, English sentences will be able to take three arguments.
+
+I'll leave these unfinished for now, but I'll revisit them after verbs are vetted.
+"""
+prepositions = ('to', 'for_', 'in_', 'on', 'with_', 'of', 'at', 'from')
+
 class Verb:
     def __init__(self, name, definitions=None):
         self.name = name
-        self.definitions = definitions or {}
+        self.definitions = definitions or {} # change this to index on signature
 
-    def lookup(self, noun):
+    def lookup(self, signature):
+        """
+        :param signature: the types of the nouns in the complement
+        :return: a definition that matches the signature
+        """
         try:
-            return self.definitions[noun]
+            return self.definitions[signature]
         except KeyError:
-            return self.lookup(noun.__bases__[0])
+            return self.lookup(signature.__bases__[0])
         except IndexError:
-            raise ValueError((self, noun))
+            raise ValueError((self, signature))
 
     def run(self, subject, complement):
         """

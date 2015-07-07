@@ -6,8 +6,8 @@ class DefiniteArticle:
         self.scope = scope
 
     def __getattr__(self, item):
-        group = self.scope[item]
-        result = nouns.Group(self.scope, group.noun)
-        result.members = list(group.members)
+        context = self.scope['nouns'][item]
+        result = nouns.Group(self.scope, context.noun)
+        result.members = list(context.members)
         result.start = -1
         return result

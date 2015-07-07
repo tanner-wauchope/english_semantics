@@ -31,9 +31,9 @@ def test_number_valid():
     pattern = Number.PATTERN + '$'
     # Leading and trailing zeros
     assert match(pattern, '000.000')
-    # Positive decimals with a leading whole number
+    # Positive decimals with a leading whole numbers
     assert match(pattern, '123.123')
-    # Negative decimals with a leading whole number
+    # Negative decimals with a leading whole numbers
     assert match(pattern, '-123.123')
 
 def test_number_invalid():

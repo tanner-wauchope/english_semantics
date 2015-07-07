@@ -116,10 +116,10 @@ def test_garden_path_clause():
 
 
 def test_garden_path_complementizer():
-    words = [Noun('number'), Determiner('the'), Noun('quote'), Verb('has')]
+    words = [Noun('numbers'), Determiner('the'), Noun('quote'), Verb('has')]
     actual = garden_path(words)[0]
     expected = Noun(
-        'number',
+        'numbers',
         complement=Verb(
             'has',
             specifier=Noun(

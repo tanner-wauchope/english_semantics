@@ -7,7 +7,7 @@ class ContradictionError(Exception):
 
 
 class Entity(Noun):
-    prototype = {}
+    pass
 
 
 class Copula(Verb):
@@ -27,7 +27,7 @@ class Copula(Verb):
         noun = complement.noun.new_subclass(name, prototype)
         subject.scope[subject.noun.__name__] = noun
 
-Entity.prototype['is_'] = Copula('is_')
+Noun.prototype['is_'] = Copula('is_')
 
 
 class Possessive(Verb):
@@ -39,4 +39,4 @@ class Possessive(Verb):
             member.possessions[complement.noun] = complement
 
 
-Entity.prototype['has_'] = Possessive('has_')
+Noun.prototype['has_'] = Possessive('has_')

@@ -45,7 +45,7 @@ def test_lexemes():
 
 def test_scan():
     paragraph = (
-        "A whole number N has a factorial.\n"
+        "A whole numbers N has a factorial.\n"
         "If N is 0,\n"
         "\tthe factorial is 1.\n"
         "Otherwise,\n"
@@ -53,7 +53,7 @@ def test_scan():
     )
     assert scan(paragraph) == [
         [
-            ['A', 'whole', 'number', 'N', 'has', 'a', 'factorial'],
+            ['A', 'whole', 'numbers', 'N', 'has', 'a', 'factorial'],
         ],
         [
             ['If', 'N', 'is', '0'],

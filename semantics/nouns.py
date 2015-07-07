@@ -3,6 +3,14 @@ import re
 from plain_english.semantics import verbs
 
 
+def new_subclass(cls, name, prototype=None):
+    class Subclass(cls):
+        prototype = cls.prototype.copy()
+    Subclass.prototype.update(prototype or {})
+    Subclass.__name__ = name
+    return Subclass
+
+
 class Noun:
     prototype = {}
 
@@ -11,14 +19,6 @@ class Noun:
 
     def __eq__(self, other):
         self.predicates = other.predicates
-
-    @classmethod
-    def new_subclass(cls, name, prototype=None):
-        class Subclass(cls):
-            prototype = cls.prototype.copy()
-        Subclass.prototype.update(prototype or {})
-        Subclass.__name__ = name
-        return Subclass
 
     def query(self, verb, noun):
         if verb in self.predicates:
