@@ -23,9 +23,8 @@ class Copula(Verb):
 
     def define(self, subject, complement, support_sentences):
         name = subject.noun.__name__
-        prototype = subject.noun.prototype
-        noun = complement.noun.new_subclass(name, prototype)
-        subject.scope[subject.noun.__name__] = noun
+        noun = type(name, (complement.noun,), {})
+        subject.scope['nouns'][name] = noun
 
 Noun.prototype['is_'] = Copula('is_')
 

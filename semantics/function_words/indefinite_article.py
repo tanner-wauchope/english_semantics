@@ -19,7 +19,7 @@ class IndefiniteArticle:
             return nouns.Group(self.scope, noun)
         elif re.match(r"_[A-Z][a-z]+_$", item):
             name = item[1:-1]
-            noun = nouns.new_subclass(entity.Entity, name)
+            noun = type(name, (entity.Entity,), {})
             self.scope['nouns'][name] = nouns.Group(self.scope, noun=noun)
             return nouns.Group(self.scope, noun)
         raise NameError(item)
