@@ -68,7 +68,7 @@ class Copula(Behavior):
     def define(self, subject, complement, support_sentences):
         name = subject.noun.__name__
         noun = type(name, (complement.noun,), {})
-        subject.scope['open_classes'][name] = noun
+        subject.scope['primitives'][name] = noun
 
 
 class Possessive(Behavior):

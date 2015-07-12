@@ -1,14 +1,14 @@
 from plain_english.semantics.complementizer import (
-    open_classes,
+    word_classes,
     Complementizer,
 )
 
 
 def test_complementizer_without_subject():
     that = Complementizer({})
-    predicate = that.has
-    assert isinstance(predicate, open_classes.Verb)
-    assert predicate.verb == 'has'
+    verb_phrase = that.has
+    assert isinstance(verb_phrase, word_classes.VerbPhrase)
+    assert verb_phrase.name == 'has'
 
 
 def test_complementizer_with_subject():

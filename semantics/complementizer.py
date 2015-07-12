@@ -1,4 +1,4 @@
-from plain_english.semantics import open_classes
+from plain_english.semantics import word_classes
 
 
 class Complementizer:
@@ -8,4 +8,4 @@ class Complementizer:
     def __getattr__(self, item):
         if item in ('a', 'an', 'the', 'every'):
             return self.scope[item]
-        return open_classes.Verb(verb=item)
+        return word_classes.VerbPhrase(item)

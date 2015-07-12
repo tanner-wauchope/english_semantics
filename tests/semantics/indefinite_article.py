@@ -1,5 +1,5 @@
 from plain_english.semantics.indefinite_article import (
-    open_classes,
+    entity,
     IndefiniteArticle,
 )
 
@@ -7,7 +7,7 @@ from plain_english.semantics.indefinite_article import (
 def test_write_scope():
     a = IndefiniteArticle({'nouns': {}})
     noun = a._Factorial_
-    assert noun.kind is open_classes.entity.Entity
+    assert noun.kind is entity.Entity
     assert a.scope['nouns']['Factorial'] is not noun
     assert not noun.members
 

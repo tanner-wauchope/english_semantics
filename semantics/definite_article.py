@@ -1,4 +1,4 @@
-from plain_english.semantics import open_classes
+from plain_english.semantics import word_classes
 
 
 class DefiniteArticle:
@@ -7,7 +7,9 @@ class DefiniteArticle:
 
     def __getattr__(self, item):
         noun = self.scope['nouns'][item]
-        result = open_classes.Noun(self.scope, noun.kind)
-        result.members = list(noun.members)
-        result.start = -1
-        return result
+        return word_classes.NounPhrase(
+            scope=self.scope,
+            kind=noun.kind,
+            members=list(noun.members),
+            selector=-1,
+        )
