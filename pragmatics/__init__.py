@@ -1,7 +1,10 @@
-from plain_english.pragmatics.text import text
-from plain_english.pragmatics.numbers import number
-from plain_english.semantics import nouns, entity
-from plain_english.semantics.function_words import (
+from plain_english.semantics.open_classes import (
+    entity,
+    text,
+    number,
+)
+from plain_english.semantics import (
+    open_classes,
     indefinite_article,
     definite_article,
     distributor,
@@ -13,8 +16,8 @@ def populate_scope(scope):
     scope['a'] = indefinite_article.IndefiniteArticle(scope)
     scope['the'] = definite_article.DefiniteArticle(scope)
     scope['every'] = distributor.Distributor(scope)
-    scope['that'] = complementizer.Complementizer()
-    scope['nouns'] = {}
-    scope['nouns']['Entity'] = nouns.Group(noun=entity.Entity, scope=scope)
-    scope['nouns']['Text'] = nouns.Group(noun=text.Text, scope=scope)
-    scope['nouns']['Number'] = nouns.Group(noun=number.Number, scope=scope)
+    scope['that'] = complementizer.Complementizer(scope)
+    scope['open_classes'] = {}
+    scope['open_classes']['Entity'] = open_classes.Noun(noun=entity.Entity, scope=scope)
+    scope['open_classes']['Text'] = open_classes.Noun(noun=text.Text, scope=scope)
+    scope['open_classes']['Number'] = open_classes.Noun(noun=number.Number, scope=scope)

@@ -1,5 +1,5 @@
 block(
-    # A whole number N has a factorial.
+    # A whole numbers N has a factorial.
     a(whole)(Number)('N').has(a("factorial")),
         # If N is 0,
         if_(N.is_(0))(

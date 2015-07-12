@@ -1,16 +1,9 @@
 
-"""
-Since there are many prepositions, I would prefer to not be opinionated about
-their meanings. Instead, they can all be defined in terms of related verbs.
+class ContradictionError(Exception):
+    pass
 
-Prepositions bind outside of introductory clauses will follow late closure.
-Consequently, English sentences will be able to take three arguments.
 
-I'll leave these unfinished for now, but I'll revisit them after verbs are vetted.
-"""
-prepositions = ('to', 'for_', 'in_', 'on', 'with_', 'of', 'at', 'from')
-
-class Verb:
+class Behavior:
     def __init__(self, name, definitions=None):
         self.name = name
         self.definitions = definitions or {} # change this to index on signature
@@ -61,15 +54,54 @@ class Verb:
             self.define(subject, complement, support_sentences)
 
 
-class Clause:
-    def __init__(self, subject=None, verb=None, complement=None):
-        self.subject = subject
-        self.verb = verb
-        self.complement = complement
+class Copula(Behavior):
+    def run(self, subject, complement):
+        if issubclass(complement.noun, subject.noun):
+            sets = [sender.values for sender in complement.members]
+            package = set.union(*sets)
+            for receiver in subject.members:
+                if receiver.value and receiver.value != package:
+                    raise ContradictionError((receiver.value, package))
+                receiver.values = package
+        raise TypeError((subject, complement))
 
-    def __call__(self, complement=None):
-        if complement is None or isinstance(complement, str):
-            self.verb.dispatch(self, complement)
-        else:
-            self.complement = complement
-            return self
+    def define(self, subject, complement, support_sentences):
+        name = subject.noun.__name__
+        noun = type(name, (complement.noun,), {})
+        subject.scope['open_classes'][name] = noun
+
+
+class Possessive(Behavior):
+    def run(self, subject, complement):
+        for member in subject.members:
+            current = member.possessions.get(complement.noun)
+            if current and current != complement:
+                raise ContradictionError
+            member.possessions[complement.noun] = complement
+
+
+class Printer(Behavior):
+    pass
+
+
+class Prompter(Behavior):
+    pass
+
+
+class Entity:
+    do = Behavior('do')
+    is_ = Copula('is_')
+    has_ = Possessive('has_')
+    say = Printer('say')
+    get = Prompter('get')
+    prototype = {}
+
+    def __init__(self):
+        self.predicates = self.prototype.copy()
+
+    def __eq__(self, other):
+        return self.predicates == other.predicates
+
+    def query(self, verb, noun):
+        if verb in self.predicates:
+            return self.predicates[verb].complements[noun]
