@@ -24,7 +24,7 @@ This subset of English currently only includes two open word classes: nouns and 
 
 There are two limitations in the current implementation that are worth noting:
 
-1. No side-effects have yet been added to the language. Consequently, the only way to use the packages are to import them in a Python file. I intend to being work on an interactive interpreter soon.
+1. No side-effects have yet been added to the language. Consequently, the only way to use the packages are to import them in a Python file. I intend to begin work on an interactive interpreter soon.
 2. The syntax specification currently depends on nouns being capitalized. Without this constraint, the syntax could not be context-free, because there would be no way to distinguish the part of speech of user-defined names without maintaining a symbol table during parsing. A mildly context-sensitive version of the parser will eventually be written, but for now, nouns are capitalized.
 
 I'll do my best to keep this README up-to-date as more modules are fleshed out and tested.
