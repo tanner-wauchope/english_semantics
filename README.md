@@ -4,8 +4,8 @@ This package implements of a subset of the English language that can be compiled
 The choice of keywords are inspired by the top-10, non-pronoun English words. These keywords can be organized into six logical groups:
 
 1. Articles (a, the): These words add nouns to the current scope or look up instances in the current scope.
-2. Auxiliary verbs (be, have): These words allow for inheritance, assignment, composition of classes.
-3. The conjunction "and": This words allows sets of one type to be unioned and sets with disparate types to be tupled.
+2. Auxiliary verbs (be, have): These words allow for assignment, inheritance, and composition.
+3. The conjunction "and": This word allows sets of one type to be unioned and sets with disparate types to be tupled.
 4. Adjectival prepositions (of, in): These words affect the set of instances that a noun phrase denotes.
 5. Adverbial prepostions (to, for): These words allow extra parameters to be passed to statements and are also
                                     also allows for conditional introductory phrases of the form "For X that ..., do Y".
@@ -13,14 +13,14 @@ The choice of keywords are inspired by the top-10, non-pronoun English words. Th
 
 Aside from the above keywords, this subset of English includes primitives and user-defined words. The acceptable primitives are:
 
-1. Algebraic expressions: These expressions are enclosed in parentheses and may include numbers, arthmetic operators, and any variables or functions made available in the current scope.
-2. Names: These expressions are enclosed in single quotes and indicate that a new token should be added to the current scope with the specified name. The motivation for this primitive type was to allow new words to be embedded in sentences while still ensuring that spelling errors do not accidentally introduce new words.
-3. Text: This primitive is for literal text. When inlined, these expressions are enclosed in double quotes. When multiple lines are needed, indented block quotes are used.
+1. Names: These primitives are enclosed in single quotes and indicate that a new token should be added to the current scope with the specified name. The motivation for this primitive type was to allow new words to be embedded in sentences while still ensuring that spelling errors do not accidentally introduce new words.
+2. Text: This primitive type is for literal text. When inlined, these expressions are enclosed in double quotes. When multiple lines are needed, indented block quotes are used.
+3. Algebraic expressions: These expressions are enclosed in parentheses and may include numbers, arthmetic operators, and any variables or functions made available in the current scope.
 
-This subset of English currently only includes two open word classes: nouns and verbs. Adjectives and adverbs will not be supported any time soon. The inflections of each word class that are supported are:
+This subset of English only includes two open word classes: nouns and verbs. Adjectives and adverbs will not be supported any time soon. The inflections of each word class that are supported are:
 
 1. Nouns: singular, plural, possessive
-2. Verbs: third-person present singular, third-person present plural
+2. Verbs: third-person present singular, third-person present plural, infinitive
 
 There are two limitations in the current implementation that are worth noting:
 
