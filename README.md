@@ -7,9 +7,9 @@ The choice of keywords are inspired by the top-10, non-pronoun English words. Th
 2. Auxiliary verbs (be, have): These words allow for assignment, inheritance, and composition.
 3. The conjunction "and": This word allows sets of one type to be unioned and sets with disparate types to be tupled.
 4. Adjectival prepositions (of, in): These words affect the set of instances that a noun phrase denotes.
-5. Adverbial prepostions (to, for): These words allow extra parameters to be passed to statements and are also
-                                    also allows for conditional introductory phrases of the form "For X that ..., do Y".
-6. The complementizer "that": This word allows flexible filtering of the sets denoted by noun phrases.
+5. Adverbial prepostions (to, for): These words allow extra parameters to be passed to statements and also
+                                     allow for conditional introductory phrases of the form "For X that ..., do Y".
+6. The complementizer "that": This word allows for flexible filtering of the sets denoted by noun phrases.
 
 Aside from the above keywords, this subset of English includes primitives and user-defined words. The acceptable primitives are:
 
