@@ -1,7 +1,7 @@
 from plain_english.semantics import word_classes
 
 
-class Complementizer:
+class That:
     def __init__(self, scope):
         self.scope = scope
 
