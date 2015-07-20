@@ -1,33 +1,35 @@
 import copy
 
-from plain_english.semantics.word_classes import (
+from plain_english.semantics.predicate import (
     entity,
-    VerbPhrase,
-    NounPhrase,
+    Predicate,
+    OrderedSet,
+    That,
 )
 
 
-def test_init_copy_and_eq_for_noun_phrases():
-    first = NounPhrase()
+def test_init_and_eq_for_noun_phrases():
+    first = OrderedSet('Factorial')
     assert first.scope == {}
     assert first.kind is entity.Entity
     assert first.members == []
-    assert first.selector is 0
-    first.members.append(1)
-    second = copy.copy(first)
+    assert first.number is 0
+    second = OrderedSet('Factorial')
     assert first == second
     assert first is not second
+    first.members.append(1)
+    assert first != second
 
 
 def test_getattr_for_noun_phrases():
-    noun_phrase = NounPhrase()
+    noun_phrase = OrderedSet('Factorial')
     first = noun_phrase._has_
     assert first.name == 'has'
     assert first.subject is noun_phrase
-    assert isinstance(first, VerbPhrase)
-    assert isinstance(noun_phrase.kind.prototype['has'], entity.Behavior)
+    assert isinstance(first, Predicate)
+    assert isinstance(noun_phrase.kind.has, entity.Relation)
     second = noun_phrase.has
-    assert first == second
+    assert first.name == second.name
 
 
 # def test_relative_clause_with_complement():
@@ -48,8 +50,8 @@ def test_getattr_for_noun_phrases():
 
 
 def test_store_complement_on_noun_phrase():
-    noun_phrase = NounPhrase()
-    verb_phrase = VerbPhrase('does', subject=noun_phrase)
+    noun_phrase = OrderedSet('Factorial')
+    verb_phrase = Predicate('does', subject=noun_phrase)
     verb_phrase(noun_phrase)
     assert verb_phrase.complement == noun_phrase
 
@@ -60,3 +62,11 @@ def test_store_complement_on_noun_phrase():
 #     verb_phrase(noun_phrase)
 #     verb_phrase()
 #     assert isinstance(noun_phrase.loves, entity.Behavior)
+
+
+def test_complementizer():
+    that = That()
+    relative_clause = that.has
+    assert isinstance(relative_clause, Predicate)
+    assert relative_clause.name == 'has'
+
