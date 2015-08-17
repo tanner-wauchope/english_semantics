@@ -19,7 +19,7 @@ class An:
             return predicate.OrderedSet(item, kind=kind, scope=self.scope)
         elif re.match(r"_[A-Z][a-z]+_$", item):
             name = item[1:-1]
-            context = predicate.OrderedSet(name, scope=self.scope)
+            context = predicate.OrderedSet(name, number=None, scope=self.scope)
             self.scope['nouns'][name] = context
             return predicate.OrderedSet(name, scope=self.scope)
         raise NameError(item)
@@ -34,8 +34,8 @@ class The:
         return predicate.OrderedSet(
             item,
             kind=noun.kind,
-            members=list(noun.members),
             number=1,
+            members=list(noun.members),
             scope=self.scope,
         )
 
@@ -49,6 +49,7 @@ class All:
         return predicate.OrderedSet(
             item,
             kind=noun.kind,
+            number=0,
             members=list(noun.members),
             scope=self.scope,
         )

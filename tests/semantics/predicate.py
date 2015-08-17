@@ -13,7 +13,7 @@ def test_init_and_eq_for_noun_phrases():
     assert first.scope == {}
     assert first.kind is entity.Entity
     assert first.members == []
-    assert first.number is 0
+    assert first.number is 1
     second = OrderedSet('Factorial')
     assert first == second
     assert first is not second
@@ -22,14 +22,14 @@ def test_init_and_eq_for_noun_phrases():
 
 
 def test_getattr_for_noun_phrases():
-    noun_phrase = OrderedSet('Factorial')
-    first = noun_phrase._has_
-    assert first.name == 'has'
-    assert first.subject is noun_phrase
+    ordered_set = OrderedSet('Person')
+    first = ordered_set._loves_
+    assert first.name == '_loves_'
+    assert first.subject is ordered_set
     assert isinstance(first, Predicate)
-    assert isinstance(noun_phrase.kind.has, entity.Relation)
-    second = noun_phrase.has
-    assert first.name == second.name
+    assert isinstance(ordered_set.kind.loves_, entity.Relation)
+    second = ordered_set.loves_
+    assert first.subject.kind.loves_ is second.subject.kind.loves_
 
 
 # def test_relative_clause_with_complement():
@@ -56,17 +56,15 @@ def test_store_complement_on_noun_phrase():
     assert verb_phrase.complement == noun_phrase
 
 
-# def test_call_verb_phrase():
-#     noun_phrase = NounPhrase({})
-#     verb_phrase = VerbPhrase('loves', subject=noun_phrase)
-#     verb_phrase(noun_phrase)
-#     verb_phrase()
-#     assert isinstance(noun_phrase.loves, entity.Behavior)
-
-
-def test_complementizer():
-    that = That()
+def test_complementizer_starting_with_verb():
+    that = That({})
     relative_clause = that.has
     assert isinstance(relative_clause, Predicate)
     assert relative_clause.name == 'has'
 
+
+def test_complementizer_starting_with_determiner():
+    determiner = type('IndefiniteArticle', tuple(), {})()
+    that = That({'the': determiner})
+    result = that.the
+    assert result is determiner

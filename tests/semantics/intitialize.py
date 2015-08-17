@@ -10,3 +10,4 @@ def test_initialize():
     assert 'Entity' in scope['nouns']
     assert 'Text' in scope['nouns']
     assert 'Number' in scope['nouns']
+    assert 'File' in scope['nouns']
