@@ -4,7 +4,6 @@ from plain_english.semantics.predicate import (
     entity,
     Predicate,
     OrderedSet,
-    That,
 )
 
 
@@ -54,17 +53,3 @@ def test_store_complement_on_noun_phrase():
     verb_phrase = Predicate('does', subject=noun_phrase)
     verb_phrase(noun_phrase)
     assert verb_phrase.complement == noun_phrase
-
-
-def test_complementizer_starting_with_verb():
-    that = That({})
-    relative_clause = that.has
-    assert isinstance(relative_clause, Predicate)
-    assert relative_clause.name == 'has'
-
-
-def test_complementizer_starting_with_determiner():
-    determiner = type('IndefiniteArticle', tuple(), {})()
-    that = That({'the': determiner})
-    result = that.the
-    assert result is determiner

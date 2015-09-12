@@ -2,6 +2,7 @@ from plain_english.semantics import (
     predicate,
     articles,
     primitive,
+    modifiers,
 )
 
 
@@ -9,7 +10,7 @@ def initialize(scope):
     scope['a'] = articles.An(scope)
     scope['an'] = scope['a']
     scope['the'] = articles.The(scope)
-    scope['that'] = predicate.That(scope)
+    scope['that'] = modifiers.That(scope)
     scope['nouns'] = {
         'Entity': predicate.OrderedSet('Entity', scope=scope),
         'Text': predicate.OrderedSet('Text', kind=primitive.Text, scope=scope),

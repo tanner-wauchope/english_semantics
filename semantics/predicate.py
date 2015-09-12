@@ -1,6 +1,3 @@
-import collections
-import re
-
 from plain_english.semantics import entity
 
 
@@ -9,11 +6,11 @@ class Predicate:
     Verb phrases represents bindings of arguments to a verb.
     These objects manage when a verb's procedure should be called.
     """
-
-    def __init__(self, name, subject=None, complement=None):
+    def __init__(self, name, subject=None, complement=None, query=None):
         self.name = name
         self.subject = subject
         self.complement = complement
+        self.query = query
 
     def __call__(self, complement=''):
         """
@@ -24,13 +21,9 @@ class Predicate:
                  Otherwise, store the complement and return this predicate.
         """
         if isinstance(complement, str):
-            if self.name == 'has_':
-                print('first')
             self.resolve_arguments()
             self.resolve_predicate(complement)
         else:
-            if self.name == 'has_':
-                print(complement.kind)
             self.complement = complement
             return self
 
@@ -81,7 +74,6 @@ class Predicate:
             self.complement.members = self.complement.resolve()
 
 
-
 class ExceededCardinalityError(Exception):
     pass
 
@@ -122,7 +114,7 @@ class OrderedSet:
             return OrderedSet(
                 self.name,
                 kind=self.kind,
-                members=self.resolve(query(self, complement)),
+                members=self.resolve(complement.query(self, complement)),
                 scope=self.scope,
             )
         else:
@@ -170,76 +162,3 @@ class OrderedSet:
 
     def full(self):
         return self.name == '' or self.definite()
-
-
-def query(group, clause):
-    """
-    :param group: a group being complemented by the clause
-    :param clause: a relative clause complementing the group
-    :return: the members that the group should have after
-             applying the relative clause
-    """
-    if clause.subject:
-        subjects = clause.subject.members
-        complements = group.members
-        mappings = get_mappings(clause.verb, subjects, complements)
-        return [item for group in mappings.values() for item in group]
-    else:
-        subjects = group.members
-        complements = clause.complement.members
-        mappings = get_mappings(clause.verb, subjects, complements)
-        return mappings.keys()
-
-
-def get_mappings(function, domain=(), range_=()):
-    """
-    :param function: a function mapping a source to a target
-    :param domain: part of the source or
-                   something empty to represent "all"
-    :param range_: part of the target or
-                   something empty to represent "all"
-    :return: the function's mappings from domain to range_ or
-             an empty dictionary to represent "all"
-    """
-    mappings = collections.defaultdict([])
-    for argument in domain:
-        for image in images(argument, function):
-            if not range_ or image in range_:
-                mappings[entity].append(image)
-    return mappings
-
-
-def images(argument, function):
-    """
-    :param argument: an entity that 'does' the function
-    :param function: a function that the entity 'does'
-    :return: the images that the entity has for the function
-    """
-    result = []
-    for image in argument.relations[function]:
-        if image.members:
-            members = image.members
-        elif not image.relative_clause:
-            members = image.kind.members
-        else:
-            members = image(image.relative_clause, eager=True) # call image
-        result.extend(members)
-    return result
-
-
-class That:
-    def __init__(self, scope):
-        self.scope = scope
-
-    def __getattr__(self, item):
-        """
-        :param item: the name of a verb or determiner
-        :return: the determiner or a predicate with the name of the verb
-        """
-        if item in ('a', 'an', 'the'):
-            return self.scope[item]
-        return Predicate(item)
-
-
-# I'll revisit these later
-prepositions = ('to_', 'for_', 'in_', 'of_')
