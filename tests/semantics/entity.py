@@ -77,10 +77,10 @@ def test_verb_execution():
     the = scope['the']
     an.Entity._loves_("the.Entity.has_(the.Text('Love'))")
 
-    # first_ordered_set = an.Entity
-    # first_ordered_set.has_(the.Text('Love'))()
-    # entity = first_ordered_set.members[0]
-    # assert 'Love' in entity.relations['has_'][Text].members
+    first_ordered_set = an.Entity
+    first_ordered_set.has_(the.Text('Love'))()
+    entity = first_ordered_set.members[0]
+    assert 'Love' in entity.relations['has_'][Text].members
 
     ordered_set = an.Entity
     ordered_set.instantiate()

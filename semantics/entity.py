@@ -1,15 +1,21 @@
 import collections
 
 
+class MultipleInheritanceError(Exception):
+    pass
+
+
 class NoDefinitionFoundForTypes(TypeError):
     pass
 
 
 def ancestors(kind):
-    # multiple inheritance is not allowed
-    if kind.__bases__:
-        return ancestors(kind.__bases__[0]) + [kind]
-    return [kind]
+    if len(kind.__bases__) > 1:
+        raise MultipleInheritanceError
+
+    if not kind.__bases__:
+        return [kind]
+    return ancestors(kind.__bases__[0]) + [kind]
 
 
 class Relation:
@@ -28,15 +34,10 @@ class Relation:
                     if saved_subject.accepts(subject) and \
                             saved_complement.accepts(complement):
                         result.append((saved_subject.scope, statements))
-        return result
-        # try:
-        #     key = self.name + complement_kind.__name__
-        #     return getattr(subject_kind, key)
-        # except AttributeError:
-        #     parent_kind = complement_kind.__bases__[0]
-        #     return self.definitions(subject_kind, parent_kind)
-        # except IndexError:
-        #     raise NoDefinitionFoundForTypes
+        if result:
+            return result
+        else:
+            raise NoDefinitionFoundForTypes
 
     def run(self, subject, complement):
         if subject.full() and not complement.full():
@@ -67,7 +68,6 @@ class Relation:
             lines = statements.split('\n')
             executables = '()\n'.join(lines) + '()'
             exec(executables, global_scope, local_scope)
-            # exec(statements, global_scope, local_scope)
 
     def set_relation(self, subject, complement):
         for member in subject.members:
@@ -78,10 +78,6 @@ class Relation:
                 relation[complement.kind] = complement
 
 class SubjectComplementAgreementError(Exception):
-    pass
-
-
-class MultipleInheritanceError(Exception):
     pass
 
 
