@@ -1,16 +1,17 @@
-from plain_english.semantics.determiners import (
+from plain_english.semantics.articles import (
     An,
     The,
-    All,
 )
-from plain_english.semantics import predicate
 
 
 def test_write_scope():
     a = An({'nouns': {}})
-    noun = a._Factorial_
-    assert a.scope['nouns']['Factorial'] is not noun
-    assert not noun.members
+    singular = a._Factorial_
+    assert a.scope['nouns']['Factorial'] is not singular
+    assert not singular.members
+    plural = a.scope['nouns']['Factorials']
+    assert plural.kind is singular.kind
+    assert plural is not singular
 
 
 def test_read_scope():
@@ -35,14 +36,3 @@ def test_the():
     assert members == second_noun.members
     assert isinstance(second_noun.members[0], first_noun.kind)
 
-
-def test_all():
-    scope = {'nouns': {}}
-    scope_noun = predicate.OrderedSet('Factorial', scope=scope)
-    scope_noun.members.append(scope_noun.kind())
-    scope['nouns']['Factorial'] = scope_noun
-    all = All(scope)
-    utterance_noun = all.Factorial
-    assert utterance_noun.kind is scope_noun.kind
-    assert utterance_noun is not scope_noun
-    assert utterance_noun.members == [scope_noun.kind()]

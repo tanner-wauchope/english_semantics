@@ -1,15 +1,14 @@
 from plain_english.semantics import (
     predicate,
-    determiners,
+    articles,
     primitive,
 )
 
 
 def initialize(scope):
-    scope['a'] = determiners.An(scope)
-    scope['an'] = determiners.An(scope)
-    scope['the'] = determiners.The(scope)
-    scope['all'] = determiners.All(scope)
+    scope['a'] = articles.An(scope)
+    scope['an'] = scope['a']
+    scope['the'] = articles.The(scope)
     scope['that'] = predicate.That(scope)
     scope['nouns'] = {
         'Entity': predicate.OrderedSet('Entity', scope=scope),

@@ -5,7 +5,6 @@ def test_initialize():
     assert 'a' in scope
     assert 'an' in scope
     assert 'the' in scope
-    assert 'all' in scope
     assert 'nouns' in scope
     assert 'Entity' in scope['nouns']
     assert 'Text' in scope['nouns']
