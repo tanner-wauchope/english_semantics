@@ -9,31 +9,18 @@ class NoDefinitionFoundForTypes(TypeError):
     pass
 
 
-def ancestors(kind):
-    if len(kind.__bases__) > 1:
-        raise MultipleInheritanceError
-
-    if not kind.__bases__:
-        return [kind]
-    return ancestors(kind.__bases__[0]) + [kind]
-
-
 class Relation:
-    def __init__(self, name, definitions):
+    def __init__(self, name, definitions=None):
         self.name = name
-        self.definitions = definitions
+        self.definitions = definitions or []
 
-    def consequents(self, subject, complement):
+    def consequences(self, subject, complement):
         result = []
-        for subject_ancestor in ancestors(subject.kind):
-            for complement_ancestor in ancestors(complement.kind):
-                key = (subject_ancestor, complement_ancestor)
-                if key in self.definitions:
-                    definition = self.definitions[key]
-                    saved_subject, saved_complement, statements = definition
-                    if saved_subject.accepts(subject) and \
-                            saved_complement.accepts(complement):
-                        result.append((saved_subject.scope, statements))
+        for definition in self.definitions:
+            subject_match = definition.subject.accepts(subject)
+            complement_match = definition.complement.accepts(complement)
+            if subject_match and complement_match:
+                result.append(definition)
         if result:
             return result
         else:
@@ -57,7 +44,9 @@ class Relation:
         :param OrderedSet complement: the complement of the sentence being run
         """
         self.set_relation(subject, complement)
-        for global_scope, statements in self.consequents(subject, complement):
+        for definition in self.consequences(subject, complement):
+            global_scope = definition.subject.scope
+            statements = definition.support_text
             # TODO: remove the 'nouns' sub-dictionary
             local_scope = {
                 'nouns': {
@@ -76,6 +65,7 @@ class Relation:
                 relation[complement.kind].add(complement.members)
             else:
                 relation[complement.kind] = complement
+
 
 class SubjectComplementAgreementError(Exception):
     pass
@@ -115,7 +105,7 @@ class Is(Relation):
 
 class Entity:
     is_ = Is('is_', {})
-    has_ = Relation('has_', {})
+    has_ = Relation('has_')
 
     def __init__(self):
         self.relations = collections.defaultdict(dict)

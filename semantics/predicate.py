@@ -11,6 +11,7 @@ class Predicate:
         self.subject = subject
         self.complement = complement
         self.query = query
+        self.support_text = ''
 
     def __call__(self, complement=''):
         """
@@ -22,6 +23,7 @@ class Predicate:
         """
         if isinstance(complement, str):
             self.resolve_arguments()
+            self.support_text = complement
             self.resolve_predicate(complement)
         else:
             self.complement = complement
@@ -54,17 +56,13 @@ class Predicate:
         elif previously_defined and not definite:
             behavior = getattr(self.subject.kind, self.name)
             behavior.run(self.subject, self.complement)
-            behavior.definitions[self.signature()] = definition
+            behavior.definitions.append(self)
         elif self.name.startswith('_'):
             new_name = self.name[1:]
-            patterns = {self.signature(): definition}
-            behavior = entity.Relation(new_name, patterns)
+            behavior = entity.Relation(new_name, definitions=[self])
             setattr(self.subject.kind, new_name, behavior)
         else:
             raise NameError(self.name)
-
-    def signature(self):
-        return self.subject.kind, self.complement.kind
 
     def resolve_arguments(self):
         self.subject.members = self.subject.resolve()
@@ -142,9 +140,10 @@ class OrderedSet:
             number=self.number,
         )
 
-    def accepts(self, ordered_set):
+    def accepts(self, other):
         # TODO: should check if the parm satisfies any relative clause on self
-        return True
+        other_ancestors = ancestors(other.kind)
+        return self.kind in other_ancestors
 
     def instantiate(self):
         complement = self.copy()
@@ -162,3 +161,8 @@ class OrderedSet:
 
     def full(self):
         return self.name == '' or self.definite()
+
+def ancestors(kind):
+    if not kind.__bases__:
+        return [kind]
+    return ancestors(kind.__bases__[0]) + [kind]

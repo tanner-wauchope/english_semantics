@@ -36,10 +36,9 @@ def test_noun_definition():
     dog_class = scope['nouns']['Dog'].kind
     assert dog_class is not Entity
     assert issubclass(dog_class, Entity)
-    definition = dog_class.is_.definitions[(dog_class, Entity)]
-    subject, complement, statements = definition
-    assert complement == superclass_set
-    assert statements == 'a.Dog.has_(a.Dog)'
+    definition = dog_class.is_.definitions[0]
+    assert definition.complement == superclass_set
+    assert definition.support_text == 'a.Dog.has_(a.Dog)'
 
 
 def test_noun_instantiation():
@@ -63,12 +62,12 @@ def test_verb_definition():
     for key, value in ordered_set.kind.__dict__.items():
         print('key: ' + str(key))
         print('value: ' + str(value))
-    definition = ordered_set.kind.loves_.definitions[(Entity, Entity)]
-    assert definition[0].name == 'Entity'
-    assert definition[0].kind is Entity
-    assert definition[1].name == ''
-    assert definition[1].kind is Entity
-    assert definition[2] == "the.Entity.has_(the.Text('Love'))"
+    definition = ordered_set.kind.loves_.definitions[0]
+    assert definition.subject.name == 'Entity'
+    assert definition.subject.kind is Entity
+    assert definition.complement.name == ''
+    assert definition.complement.kind is Entity
+    assert definition.support_text == "the.Entity.has_(the.Text('Love'))"
 
 
 def test_verb_execution():
