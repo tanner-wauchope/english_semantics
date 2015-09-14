@@ -67,7 +67,7 @@ class Predicate:
     def resolve_arguments(self):
         self.subject.members = self.subject.resolve()
         if not self.complement:
-            self.complement = OrderedSet('', number=0, scope=self.subject.scope)
+            self.complement = OrderedSet('', plural='', number=0, scope=self.subject.scope)
         else:
             self.complement.members = self.complement.resolve()
 
@@ -112,6 +112,7 @@ class OrderedSet:
         elif eager or self.members:
             return OrderedSet(
                 self.name,
+                plural=self.plural,
                 kind=self.kind,
                 members=self.resolve(complement.query(self, complement)),
                 scope=self.scope,
@@ -135,6 +136,7 @@ class OrderedSet:
     def copy(self):
         return OrderedSet(
             self.name,
+            plural=self.plural,
             kind=self.kind,
             members=list(self.members),
             scope=self.scope,

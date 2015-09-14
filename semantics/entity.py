@@ -47,7 +47,6 @@ class Relation:
         for definition in self.consequences(subject, complement):
             global_scope = definition.subject.scope
             statements = definition.support_text
-            # TODO: remove the 'nouns' sub-dictionary
             local_scope = {
                 'nouns': {
                     subject.kind.__name__: subject,

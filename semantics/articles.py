@@ -16,7 +16,12 @@ class An:
         """
         if item in self.scope['singular']:
             phrase = self.scope['singular'][item]
-            return predicate.OrderedSet(item, kind=phrase.kind, scope=self.scope)
+            return predicate.OrderedSet(
+                item,
+                plural=phrase.plural,
+                kind=phrase.kind,
+                scope=self.scope
+            )
         elif re.match(r"_[A-Z][a-z]+_$", item):
             singular = item[1:-1]
             phrase = predicate.OrderedSet(
