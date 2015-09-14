@@ -77,8 +77,9 @@ class ExceededCardinalityError(Exception):
 
 
 class OrderedSet:
-    def __init__(self, name, kind=None, number=1, members=None, scope=None):
+    def __init__(self, name, plural=None, kind=None, number=1, members=None, scope=None):
         self.name = name
+        self.plural = plural or pluralize(name)
         self.kind = kind or entity.Entity
         self.members = members or []
         self.scope = scope or {}
@@ -149,7 +150,7 @@ class OrderedSet:
         complement = self.copy()
         instance = self.kind()
         self.members.append(instance)
-        self.scope['nouns'][self.name].members.append(instance)
+        self.scope['singular'][self.name].members.append(instance)
         self.is_(complement)
 
     def definite(self):
@@ -166,3 +167,21 @@ def ancestors(kind):
     if not kind.__bases__:
         return [kind]
     return ancestors(kind.__bases__[0]) + [kind]
+
+
+def pluralize(singular):
+    """
+    :param singular: the singular spelling
+    :return: the default plural spelling
+    """
+    if singular.endswith('h'):
+        plural = singular + 'es'
+    elif singular.endswith('s'):
+        plural = singular + 'es'
+    elif singular.endswith('o') and singular[-2] not in 'aeiou':
+        plural = singular + 'es'
+    elif singular.endswith('y') and singular[-2] not in 'aeiou':
+        plural = singular[:-1] + 'ies'
+    else:
+        plural = singular + 's'
+    return plural

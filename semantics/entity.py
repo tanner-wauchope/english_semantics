@@ -99,7 +99,7 @@ class Is(Relation):
             raise MultipleInheritanceError((subject, complement))
         name = subject.name
         kind = type(name, (complement.kind,), {})
-        subject.scope['nouns'][name].kind = kind
+        subject.scope['singular'][name].kind = kind
         subject.kind = kind
 
 

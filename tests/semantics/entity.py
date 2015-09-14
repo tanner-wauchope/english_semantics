@@ -33,7 +33,7 @@ def test_noun_definition():
     an = scope['an']
     superclass_set = an.Entity
     a._Dog_.is_(superclass_set)('a.Dog.has_(a.Dog)')
-    dog_class = scope['nouns']['Dog'].kind
+    dog_class = scope['singular']['Dog'].kind
     assert dog_class is not Entity
     assert issubclass(dog_class, Entity)
     definition = dog_class.is_.definitions[0]
@@ -47,11 +47,11 @@ def test_noun_instantiation():
     an = scope['an']
     the = scope['the']
     a._Dog_.has_(an.Entity)('a.Dog.has_(a.Dog)')
-    dog_class = scope['nouns']['Dog'].kind
-    scope['nouns']['Dog'].members.append(dog_class())
+    dog_class = scope['singular']['Dog'].kind
+    scope['singular']['Dog'].members.append(dog_class())
     a.Dog.has_(the.Dog)()
-    assert len(scope['nouns']['Dog'].members) is 2
-    assert scope['nouns']['Dog'].members[0] != scope['nouns']['Dog'].members[1]
+    assert len(scope['singular']['Dog'].members) is 2
+    assert scope['singular']['Dog'].members[0] != scope['singular']['Dog'].members[1]
 
 
 def test_verb_definition():

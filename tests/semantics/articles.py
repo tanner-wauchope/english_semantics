@@ -5,34 +5,34 @@ from plain_english.semantics.articles import (
 
 
 def test_write_scope():
-    a = An({'nouns': {}})
+    a = An({'singular': {}})
     singular = a._Factorial_
-    assert a.scope['nouns']['Factorial'] is not singular
     assert not singular.members
-    plural = a.scope['nouns']['Factorials']
-    assert plural.kind is singular.kind
+    plural = a.scope['Factorials']
     assert plural is not singular
+    assert plural.kind is singular.kind
 
 
 def test_read_scope():
-    a = An({'nouns': {}})
-    first_noun = a._Factorial_
-    second_noun = a.Factorial
-    assert first_noun is not second_noun
-    assert second_noun is not a.scope['nouns']['Factorial']
-    assert second_noun.kind is first_noun.kind
-    assert not second_noun.members
+    a = An({'singular': {}})
+    first_phrase = a._Factorial_
+    second_phrase = a.Factorial
+    assert first_phrase is not second_phrase
+    assert second_phrase is not a.scope['Factorials']
+    assert second_phrase.kind is first_phrase.kind
+    assert not second_phrase.members
 
 
 def test_the():
-    scope = {'nouns': {}}
+    scope = {}
+    scope['singular'] = {}
     a = An(scope)
     the = The(scope)
-    first_noun = a._Factorial_
-    members = scope['nouns']['Factorial'].members
-    members.append(first_noun.kind())
-    second_noun = the.Factorial
-    assert members is not second_noun.members
-    assert members == second_noun.members
-    assert isinstance(second_noun.members[0], first_noun.kind)
+    indefinite_phrase = a._Factorial_
+    plural = scope['Factorials']
+    plural.members.append(plural.kind())
+    definite_phrase = the.Factorial
+    assert plural.members is not definite_phrase.members
+    assert plural.members == definite_phrase.members
+    assert isinstance(definite_phrase.members[0], indefinite_phrase.kind)
 
