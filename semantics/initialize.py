@@ -7,7 +7,7 @@ from plain_english.semantics import (
 
 
 def initialize(scope):
-    scope['a'] = articles.An(scope)
+    scope['a'] = articles.IndefiniteArticle(scope)
     scope['an'] = scope['a']
     scope['the'] = articles.The(scope)
     scope['that'] = modifiers.That(scope)

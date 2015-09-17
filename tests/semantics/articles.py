@@ -1,11 +1,11 @@
 from plain_english.semantics.articles import (
-    An,
+    IndefiniteArticle,
     The,
 )
 
 
 def test_write_scope():
-    a = An({'singular': {}})
+    a = IndefiniteArticle({'singular': {}})
     singular = a._Factorial_
     assert not singular.members
     plural = a.scope['Factorials']
@@ -14,7 +14,7 @@ def test_write_scope():
 
 
 def test_read_scope():
-    a = An({'singular': {}})
+    a = IndefiniteArticle({'singular': {}})
     first_phrase = a._Factorial_
     second_phrase = a.Factorial
     assert first_phrase is not second_phrase
@@ -26,7 +26,7 @@ def test_read_scope():
 def test_the():
     scope = {}
     scope['singular'] = {}
-    a = An(scope)
+    a = IndefiniteArticle(scope)
     the = The(scope)
     indefinite_phrase = a._Factorial_
     plural = scope['Factorials']
