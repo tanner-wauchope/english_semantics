@@ -1,9 +1,21 @@
 import importlib
+import collections
 
-from plain_english.semantics import entity
+from plain_english.semantics import relations
 
 
-class Primitive(entity.Entity):
+class Entity:
+    is_ = relations.Is('is_', {})
+    has_ = relations.Relation('has_')
+
+    def __init__(self):
+        self.relations = collections.defaultdict(dict)
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
+
+class Primitive(Entity):
     """
     Wraps a primitive value that may be evaluted lazily from expression text.
     """

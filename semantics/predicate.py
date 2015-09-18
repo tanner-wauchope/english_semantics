@@ -1,4 +1,4 @@
-from plain_english.semantics import entity
+from plain_english.semantics import relations, entities
 
 
 class Predicate:
@@ -42,7 +42,6 @@ class Predicate:
         """
         previously_defined = hasattr(self.subject.kind, self.name)
         definite = self.subject.definite() or self.complement.definite()
-        definition = (self.subject, self.complement, support_sentences)
         if self.name == 'has_':
             print(definite)
         if not self.name.endswith('_'):
@@ -59,7 +58,7 @@ class Predicate:
             behavior.definitions.append(self)
         elif self.name.startswith('_'):
             new_name = self.name[1:]
-            behavior = entity.Relation(new_name, definitions=[self])
+            behavior = relations.Relation(new_name, definitions=[self])
             setattr(self.subject.kind, new_name, behavior)
         else:
             raise NameError(self.name)
@@ -80,7 +79,7 @@ class OrderedSet:
     def __init__(self, name, plural=None, kind=None, number=1, members=None, scope=None):
         self.name = name
         self.plural = plural or pluralize(name)
-        self.kind = kind or entity.Entity
+        self.kind = kind or entities.Entity
         self.members = members or []
         self.scope = scope or {}
         self.number = number

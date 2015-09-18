@@ -1,16 +1,15 @@
-import copy
-
 from plain_english.semantics.predicate import (
-    entity,
+    relations,
     Predicate,
     OrderedSet,
 )
+from plain_english.semantics import entities
 
 
 def test_init_and_eq_for_noun_phrases():
     first = OrderedSet('Factorial')
     assert first.scope == {}
-    assert first.kind is entity.Entity
+    assert first.kind is entities.Entity
     assert first.members == []
     assert first.number is 1
     second = OrderedSet('Factorial')
@@ -26,7 +25,8 @@ def test_getattr_for_noun_phrases():
     assert first.name == '_loves_'
     assert first.subject is ordered_set
     assert isinstance(first, Predicate)
-    assert isinstance(ordered_set.kind.loves_, entity.Relation)
+    first()
+    assert isinstance(ordered_set.kind.loves_, relations.Relation)
     second = ordered_set.loves_
     assert first.subject.kind.loves_ is second.subject.kind.loves_
 
@@ -37,8 +37,8 @@ def test_getattr_for_noun_phrases():
 #     verb_phrase = VerbPhrase('is_', complement=complement)
 #     subject = subject(verb_phrase)
 #     assert subject.members == [1]
-
-
+#
+#
 # def test_relative_clause_with_subject():
 #     subject_members = [entity.Entity()]
 #     subject = NounPhrase(members=subject_members)

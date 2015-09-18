@@ -1,10 +1,3 @@
-import collections
-
-
-class MultipleInheritanceError(Exception):
-    pass
-
-
 class NoDefinitionFoundForTypes(TypeError):
     pass
 
@@ -94,22 +87,7 @@ class Is(Relation):
         subject.members = complement.members
 
     def handle_indefinite_complement(self, subject, complement):
-        if subject.kind is not Entity:
-            raise MultipleInheritanceError((subject, complement))
         name = subject.name
         kind = type(name, (complement.kind,), {})
         subject.scope['singular'][name].kind = kind
         subject.kind = kind
-
-
-class Entity:
-    is_ = Is('is_', {})
-    has_ = Relation('has_')
-
-    def __init__(self):
-        self.relations = collections.defaultdict(dict)
-
-    def __eq__(self, other):
-        return self.__dict__ == other.__dict__
-
-

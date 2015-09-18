@@ -8,7 +8,7 @@ One meaning of "for" is analogous to one meaning of "to".
     - Both can act as adverbial prepositions that introduce a noun phrase.
 """
 import collections
-from plain_english.semantics import predicate, entity
+from plain_english.semantics import predicate, relations
 
 
 def query(group, clause):
@@ -44,7 +44,7 @@ def get_mappings(function, domain=(), range_=()):
     for argument in domain:
         for image in images(argument, function):
             if not range_ or image in range_:
-                mappings[entity].append(image)
+                mappings[relations].append(image)
     return mappings
 
 

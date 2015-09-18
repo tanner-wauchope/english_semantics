@@ -2,9 +2,7 @@
 # import io
 
 from plain_english.semantics.initialize import initialize
-from plain_english.semantics.predicate import OrderedSet
-from plain_english.semantics.entity import Entity
-from plain_english.semantics.primitive import Text
+from plain_english.semantics.entities import Entity, Text
 
 """
 A writer should not ordinarily have to wrap any previous defined words in quotes.
