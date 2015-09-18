@@ -49,7 +49,7 @@ def test_noun_instantiation():
     scope['singular']['Dog'].members.append(dog_class())
     a.Dog.has_(the.Dog)()
     assert len(scope['singular']['Dog'].members) is 2
-    assert scope['singular']['Dog'].members[0] != scope['singular']['Dog'].members[1]
+    assert scope['singular']['Dog'].members[0] is not scope['singular']['Dog'].members[1]
 
 
 def test_verb_definition():
@@ -63,8 +63,7 @@ def test_verb_definition():
     definition = ordered_set.kind.loves_.definitions[0]
     assert definition.subject.name == 'Entity'
     assert definition.subject.kind is Entity
-    assert definition.complement.name == ''
-    assert definition.complement.kind is Entity
+    assert definition.complement is None
     assert definition.support_text == "the.Entity.has_(the.Text('Love'))"
 
 

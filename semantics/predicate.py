@@ -41,9 +41,7 @@ class Predicate:
         A name error is thrown non-quoted verb name doesn't reference a behavior.
         """
         previously_defined = hasattr(self.subject.kind, self.name)
-        definite = self.subject.definite() or self.complement.definite()
-        if self.name == 'has_':
-            print(definite)
+        definite = self.definite()
         if not self.name.endswith('_'):
             raise NameError(self.name)
         elif previously_defined and definite:
@@ -51,7 +49,7 @@ class Predicate:
             behavior.run(self.subject, self.complement)
             lines = support_sentences.split('\n')
             executables = '()\n'.join(lines) + '()'
-            exec(executables, self.subject.scope)
+            exec(executables, self.subject.scope())
         elif previously_defined and not definite:
             behavior = getattr(self.subject.kind, self.name)
             behavior.run(self.subject, self.complement)
@@ -63,11 +61,14 @@ class Predicate:
         else:
             raise NameError(self.name)
 
+    def definite(self):
+        definite_subject = self.subject and self.subject.definite()
+        definite_complement = self.complement and self.complement.definite()
+        return definite_subject and definite_complement
+
     def resolve_arguments(self):
         self.subject.members = self.subject.resolve()
-        if not self.complement:
-            self.complement = OrderedSet('', plural='', number=0, scope=self.subject.scope)
-        else:
+        if self.complement:
             self.complement.members = self.complement.resolve()
 
 
@@ -76,16 +77,19 @@ class ExceededCardinalityError(Exception):
 
 
 class OrderedSet:
-    def __init__(self, name, plural=None, kind=None, number=1, members=None, scope=None):
+    def __init__(self, determiner, name, plural=None, kind=None, members=None):
+        self.determiner = determiner
         self.name = name
-        self.plural = plural or pluralize(name)
         self.kind = kind or entities.Entity
         self.members = members or []
-        self.scope = scope or {}
-        self.number = number
+
+    def plural(self):
+        return self.name in self.scope()
+
+    def scope(self):
+        return self.determiner.scope
 
     def __eq__(self, other):
-
         return self.members == other.members
 
     def __getattr__(self, item):
@@ -105,41 +109,38 @@ class OrderedSet:
                  a group with an un-queried relative clause
         """
         if not isinstance(complement, Predicate):
-            primitive = self.kind(complement, self.scope)
-            self.members = [primitive.format(self.scope)]
+            primitive = self.kind(complement, self.scope())
+            self.members = [primitive.format(self.scope())]
             return self
         elif eager or self.members:
             return OrderedSet(
+                self.determiner,
                 self.name,
-                plural=self.plural,
                 kind=self.kind,
                 members=self.resolve(complement.query(self, complement)),
-                scope=self.scope,
             )
         else:
             self.relative_clause = complement
             return self
 
     def add(self, members):
-        self.members.extend(members)
-        if len(self.members) > self.number:
+        if len(self.members) + len(members) > 1 and not self.plural():
             raise ExceededCardinalityError((self, self.members))
+        self.members.extend(members)
 
     def resolve(self, members=None):
         members = members or self.members
-        if self.number is None:
+        if self.plural():
             return members
         else:
-            return self.members[-self.number:]
+            return self.members[-1:]
 
     def copy(self):
         return OrderedSet(
+            self.determiner,
             self.name,
-            plural=self.plural,
             kind=self.kind,
             members=list(self.members),
-            scope=self.scope,
-            number=self.number,
         )
 
     def accepts(self, other):
@@ -151,38 +152,16 @@ class OrderedSet:
         complement = self.copy()
         instance = self.kind()
         self.members.append(instance)
-        self.scope['singular'][self.name].members.append(instance)
+        self.scope()['singular'][self.name].members.append(instance)
         self.is_(complement)
 
     def definite(self):
-        return (
-            self.members or
-            self.number is None or
-            self.number > 1
-        )
+        return self.determiner.DEFINITE
 
     def full(self):
-        return self.name == '' or self.definite()
+        return not self.plural() and self.members
 
 def ancestors(kind):
     if not kind.__bases__:
         return [kind]
     return ancestors(kind.__bases__[0]) + [kind]
-
-
-def pluralize(singular):
-    """
-    :param singular: the singular spelling
-    :return: the default plural spelling
-    """
-    if singular.endswith('h'):
-        plural = singular + 'es'
-    elif singular.endswith('s'):
-        plural = singular + 'es'
-    elif singular.endswith('o') and singular[-2] not in 'aeiou':
-        plural = singular + 'es'
-    elif singular.endswith('y') and singular[-2] not in 'aeiou':
-        plural = singular[:-1] + 'ies'
-    else:
-        plural = singular + 's'
-    return plural

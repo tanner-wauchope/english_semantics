@@ -71,10 +71,9 @@ class IndefiniteArticle(Determiner):
         """
         phrase = self.scope['singular'][singular]
         return predicate.OrderedSet(
+            self,
             singular,
-            plural=phrase.plural,
             kind=phrase.kind,
-            scope=self.scope
         )
 
     def defining_noun_phrase(self, new: str) -> predicate.OrderedSet:
@@ -82,10 +81,10 @@ class IndefiniteArticle(Determiner):
         :param new: the singular spelling of a new noun
         :return: a singular Noun Phrase that introduces a kind
         """
-        phrase = predicate.OrderedSet(new, number=None, scope=self.scope)
-        self.scope[phrase.plural] = phrase
+        phrase = predicate.OrderedSet(self, pluralize(new))
+        self.scope[phrase.name] = phrase
         self.scope['singular'][new] = phrase
-        return predicate.OrderedSet(new, scope=self.scope)
+        return predicate.OrderedSet(self, new)
 
 
 class The(Determiner):
@@ -102,12 +101,10 @@ class The(Determiner):
         """
         phrase = self.scope['singular'][singular]
         return predicate.OrderedSet(
+            self,
             singular,
-            plural=phrase.plural,
             kind=phrase.kind,
-            number=1,
             members=list(phrase.members),
-            scope=self.scope,
         )
 
     def plural_noun_phrase(self, plural: str) -> predicate.OrderedSet:
@@ -117,10 +114,25 @@ class The(Determiner):
         """
         phrase = self.scope[plural]
         return predicate.OrderedSet(
+            self,
             plural,
-            plural=phrase.plural,
             kind=phrase.kind,
-            number=None,
             members=list(phrase.members),
-            scope=self.scope,
         )
+
+
+def pluralize(singular):
+    """
+    :param singular: the singular spelling
+    :return: the default plural spelling
+    """
+    if singular.endswith('h'):
+        return singular + 'es'
+    elif singular.endswith('s'):
+        return singular + 'es'
+    elif singular.endswith('o') and singular[-2] not in 'aeiou':
+        return singular + 'es'
+    elif singular.endswith('y') and singular[-2] not in 'aeiou':
+        return singular[:-1] + 'ies'
+    else:
+        return singular + 's'

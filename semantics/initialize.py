@@ -7,14 +7,15 @@ from plain_english.semantics import (
 
 
 def initialize(scope):
-    scope['a'] = articles.IndefiniteArticle(scope)
-    scope['an'] = scope['a']
+    indefinite_article = articles.IndefiniteArticle(scope)
+    scope['a'] = indefinite_article
+    scope['an'] = indefinite_article
     scope['the'] = articles.The(scope)
     scope['that'] = modifiers.That(scope)
-    scope['Entities'] = predicate.OrderedSet('Entity', scope=scope)
-    scope['Texts'] = predicate.OrderedSet('Text', kind=entities.Text, scope=scope)
-    scope['Numbers'] = predicate.OrderedSet('Number', kind=entities.Number, scope=scope)
-    scope['Files'] = predicate.OrderedSet('File', kind=entities.File, scope=scope)
+    scope['Entities'] = predicate.OrderedSet(indefinite_article, 'Entity')
+    scope['Texts'] = predicate.OrderedSet(indefinite_article, 'Text', kind=entities.Text)
+    scope['Numbers'] = predicate.OrderedSet(indefinite_article, 'Number', kind=entities.Number)
+    scope['Files'] = predicate.OrderedSet(indefinite_article, 'File', kind=entities.File)
     scope['singular'] = {
         'Entity': scope['Entities'],
         'Text': scope['Texts'],

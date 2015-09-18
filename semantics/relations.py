@@ -1,3 +1,14 @@
+def full(noun_phrase):
+    return not noun_phrase or noun_phrase.full()
+
+
+def matches(first_noun_phrase, second_noun_phrase):
+    if not first_noun_phrase and not second_noun_phrase:
+        return True
+    elif first_noun_phrase and second_noun_phrase:
+        return first_noun_phrase.accepts(second_noun_phrase)
+
+
 class NoDefinitionFoundForTypes(TypeError):
     pass
 
@@ -10,8 +21,8 @@ class Relation:
     def consequences(self, subject, complement):
         result = []
         for definition in self.definitions:
-            subject_match = definition.subject.accepts(subject)
-            complement_match = definition.complement.accepts(complement)
+            subject_match = matches(definition.subject, subject)
+            complement_match = matches(definition.complement, complement)
             if subject_match and complement_match:
                 result.append(definition)
         if result:
@@ -20,11 +31,11 @@ class Relation:
             raise NoDefinitionFoundForTypes
 
     def run(self, subject, complement):
-        if subject.full() and not complement.full():
+        if full(subject) and not full(complement):
             complement.instantiate()
-        elif not subject.full() and complement.full():
+        elif not full(subject) and full(complement):
             subject.instantiate()
-        if subject.full() and complement.full():
+        if full(subject) and full(complement):
             self.run_eagerly(subject, complement)
 
     def run_eagerly(self, subject, complement):
@@ -36,16 +47,18 @@ class Relation:
         :param OrderedSet subject: the subject of the sentence being run
         :param OrderedSet complement: the complement of the sentence being run
         """
-        self.set_relation(subject, complement)
+        if complement:
+            self.set_relation(subject, complement)
         for definition in self.consequences(subject, complement):
-            global_scope = definition.subject.scope
+            global_scope = definition.subject.scope()
             statements = definition.support_text
             local_scope = {
                 'nouns': {
                     subject.kind.__name__: subject,
-                    complement.kind.__name__: complement,
                 }
             }
+            if complement:
+                local_scope['nouns'][complement.kind.__name__] = complement
             lines = statements.split('\n')
             executables = '()\n'.join(lines) + '()'
             exec(executables, global_scope, local_scope)
@@ -69,7 +82,7 @@ class MutationError(Exception):
 
 class Is(Relation):
     def run(self, subject, complement):
-        if (subject.number is 1) is not (complement.number is 1):
+        if subject.plural() is not complement.plural():
             raise SubjectComplementAgreementError((subject, self, complement))
         elif not complement.definite():
             self.handle_indefinite_complement(subject, complement)
@@ -89,5 +102,5 @@ class Is(Relation):
     def handle_indefinite_complement(self, subject, complement):
         name = subject.name
         kind = type(name, (complement.kind,), {})
-        subject.scope['singular'][name].kind = kind
+        subject.scope()['singular'][name].kind = kind
         subject.kind = kind

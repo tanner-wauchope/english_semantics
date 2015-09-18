@@ -1,3 +1,4 @@
+from plain_english.semantics.articles import IndefiniteArticle
 from plain_english.semantics.predicate import (
     relations,
     Predicate,
@@ -7,12 +8,11 @@ from plain_english.semantics import entities
 
 
 def test_init_and_eq_for_noun_phrases():
-    first = OrderedSet('Factorial')
-    assert first.scope == {}
+    a = IndefiniteArticle({})
+    first = OrderedSet(a, 'Factorial')
     assert first.kind is entities.Entity
     assert first.members == []
-    assert first.number is 1
-    second = OrderedSet('Factorial')
+    second = OrderedSet(None, 'Factorial')
     assert first == second
     assert first is not second
     first.members.append(1)
@@ -20,7 +20,8 @@ def test_init_and_eq_for_noun_phrases():
 
 
 def test_getattr_for_noun_phrases():
-    ordered_set = OrderedSet('Person')
+    a = IndefiniteArticle({})
+    ordered_set = OrderedSet(a, 'Person')
     first = ordered_set._loves_
     assert first.name == '_loves_'
     assert first.subject is ordered_set
@@ -49,7 +50,8 @@ def test_getattr_for_noun_phrases():
 
 
 def test_store_complement_on_noun_phrase():
-    noun_phrase = OrderedSet('Factorial')
+    a = IndefiniteArticle({})
+    noun_phrase = OrderedSet(a, 'Factorial')
     verb_phrase = Predicate('does', subject=noun_phrase)
     verb_phrase(noun_phrase)
     assert verb_phrase.complement == noun_phrase
