@@ -1,0 +1,8 @@
+/plain_english/syntax/ has "translate".
+/plain_english/pragmatics/properties.en has "Predicates".
+
+A Text T "formats" Predicates P into (T.format(**P)).
+
+A Text T has a "Meaning".
+The Meaning is (eval(translate(T))).
+Or, the "Meaning is (exec(translate(T))).

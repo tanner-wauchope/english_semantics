@@ -1,6 +1,0 @@
-an Integer E 'raises' a Integer B to a 'Power' P.
-0 raises B to 1.
-otherwise,
-    P' is the Power to which the Integer "E - 1" raise B,
-    and P is the Integer "P' * B".
-

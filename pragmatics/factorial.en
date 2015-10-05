@@ -1,7 +1,0 @@
-A whole number N has a factorial.
-    If N is 0,
-        the factorial is 1.
-    Otherwise,
-        it is N times the factorial of N minus 1.
-
-What is the factorial of 5?
