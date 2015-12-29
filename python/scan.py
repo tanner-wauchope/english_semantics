@@ -1,3 +1,5 @@
+import shlex
+
 
 class InvalidParagraph(SyntaxError):
     """
@@ -20,21 +22,29 @@ class InvalidClause(SyntaxError):
     pass
 
 
+class InvalidToken(SyntaxError):
+    pass
+
+
 def validate_paragraph(paragraph):
     """
     Checks if the paragraph ends with a period.
     :param paragraph: text that may contain possessives or embedded quotes
     """
-    if not paragraph.endswith('.\n'):
+    if paragraph.strip().endswith('.'):
+        return paragraph.strip()
+    else:
         raise InvalidParagraph('A paragraph should end with a period')
 
 
 def validate_sentence(sentence):
     """
-    Checks that the sentence contains more lines that clauses.
+    Checks that the sentence contains more lines than clauses.
     :param sentence: a sentence that may be spread across multiple lines
     """
-    if len(split(sentence, '\n')) is not len(split(sentence, ',\n\t')):
+    if len(split(sentence, '\n')) is len(split(sentence, ',\n\t')):
+        return sentence.strip()
+    else:
         raise InvalidSentence('Contains more lines than clauses')
 
 
@@ -47,6 +57,8 @@ def validate_clause(clause):
         raise InvalidClause('Clause starts with a quote')
     elif clause.count('"') % 2 == 1:
         raise InvalidClause('Clause missing quotation mark')
+    else:
+        return clause.strip()
 
 
 def split(text, delimiter):
@@ -56,20 +68,17 @@ def split(text, delimiter):
     return segments
 
 
-def words(phrase):
-    """
-    :param phrase: text lacking quotes but possibly having possessives
-    :return: a list of words and clitics
-    """
-    result = []
-    for lexeme in split(phrase, ' '):
-        if "'" in lexeme and not lexeme[0] == "'" and not lexeme[-1] == "'":
-            parts = lexeme.split("'")
-            result.append(parts[0])
-            result.append("'" + parts[1])
+def is_quote(lexeme):
+    if len(lexeme) < 2 or lexeme[-1] != '"':
+        return False
+
+    trailing_slashes = 0
+    for char in reversed(lexeme[:-1]):
+        if char == '\\':
+            trailing_slashes += 1
         else:
-            result.append(lexeme)
-    return result
+            break
+    return trailing_slashes % 2 == 0
 
 
 def lexemes(clause):
@@ -77,13 +86,18 @@ def lexemes(clause):
     :param clause: text that may contain possessives or embedded quotes
     :return: a list of lexemes, which are words or quotes
     """
-    result = []
-    for i, segment in enumerate(split(clause, '"')):
-        if i % 2 == 0:
-            result.extend(words(segment))
-        else:
-            result.append('"' + segment + '"')
-    return result
+    lexemes = []
+    lexeme = []
+    for char in clause:
+        if char not in " '" or lexeme[:1] == ['"']:
+            lexeme.append(char)
+        if lexeme[:1] != ['"'] and char in " '" or is_quote(lexeme):
+            lexeme = []
+        if char == "'":
+            lexeme.append(char)
+        if lexeme and [lexeme] != lexemes[-1:]:
+            lexemes.append(lexeme)
+    return [''.join(token) for token in lexemes]
 
 
 def scan(paragraph):
@@ -91,12 +105,12 @@ def scan(paragraph):
     :param paragraph: text without empty lines or invisible whitespace
     :return: sentences that contain lines that contain lexemes
     """
-    validate_paragraph(paragraph)
+    paragraph = validate_paragraph(paragraph)
     sentences = []
-    for sentence in split(paragraph, '.\n'):
-        validate_sentence(sentence)
+    for sentence in paragraph[:-1].split('.\n'):
+        sentence = validate_sentence(sentence)
         sentences.append([])
         for clause in sentence.split(',\n\t'):
-            validate_clause(clause)
+            clause = validate_clause(clause)
             sentences[-1].append(lexemes(clause))
     return sentences

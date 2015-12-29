@@ -1,3 +1,8 @@
+"""
+It may be helpful to allow a plural number of specifiers and complements:
+- This would allow coordination of nouns, predicates, clauses, and sentences.
+"""
+
 
 class Word:
     """
@@ -35,7 +40,7 @@ class Word:
         their specifiers and complements are equal.
         """
         return (
-            other and
+            isinstance(other, Word) and
             self.head == other.head and
             self.specifier == other.specifier and
             self.complement == other.complement
@@ -51,4 +56,15 @@ class Word:
         result += self.head
         if self.complement:
             result += ' ' + str(self.complement)
+        return result
+
+    def python(self):
+        raise NotImplementedError
+
+    def children(self):
+        result = []
+        if self.specifier:
+            result.append(self.specifier)
+        if self.complement:
+            result.append(self.complement)
         return result

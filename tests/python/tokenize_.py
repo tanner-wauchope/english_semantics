@@ -1,7 +1,7 @@
 import pytest
 
-from plain_english.syntax import categories
-from plain_english.syntax.tokenize import (
+from plain_english.python import categories
+from plain_english.python.tokenize import (
     InvalidToken,
     classify,
     tokenize,
@@ -11,14 +11,12 @@ from plain_english.syntax.tokenize import (
 def test_classify_valid():
     assert classify("'") == categories.Clitic
     assert classify('that') == categories.Complementizer
-    assert classify('otherwise') == categories.ConjunctiveAdverb
+    assert classify('or') == categories.Or
     assert classify('a') == categories.Determiner
     assert classify('it') == categories.Noun
     assert classify('7') == categories.Number
-    assert classify('its') == categories.Possessive
     assert classify('"abc"') == categories.Quote
     assert classify('if') == categories.Subordinator
-    assert classify('X') == categories.Variable
     assert classify('has') == categories.Verb
 
 def test_classify_invalid():
@@ -37,7 +35,7 @@ def test_classify_invalid():
 def test_tokenize():
     paragraph = [
         [
-            ['A', 'Number', 'N', 'has', 'a', 'Factorial'],
+            ['A', 'Number', 'has', 'a', 'Factorial'],
         ]
     ]
     assert tokenize(paragraph) == [
@@ -45,7 +43,6 @@ def test_tokenize():
             [
                 categories.Determiner('A'),
                 categories.Noun('Number'),
-                categories.Variable('N'),
                 categories.Verb('has'),
                 categories.Determiner('a'),
                 categories.Noun('Factorial'),

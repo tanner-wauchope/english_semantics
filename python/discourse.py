@@ -7,7 +7,7 @@ from .codify import codify
 def interpret(english):
     """
     :param english: English text to be interpreted
-    :return: a syntax tree or list of syntax trees if the English is valid
+    :return: a python tree or list of python trees if the English is valid
              an Exception object if the English was invalid
     """
     try:

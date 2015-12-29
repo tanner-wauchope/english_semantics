@@ -1,6 +1,6 @@
 import pytest
 
-from plain_english.syntax.scan import (
+from plain_english.python.scan import (
     InvalidParagraph,
     InvalidSentence,
     InvalidClause,
@@ -8,10 +8,10 @@ from plain_english.syntax.scan import (
     validate_sentence,
     validate_clause,
     split,
-    words,
+    is_quote,
     lexemes,
 )
-from plain_english.syntax.scan import scan
+from plain_english.python.scan import scan
 
 
 def test_validate_paragraph():
@@ -35,11 +35,14 @@ def test_split():
     assert split('a b c ', ' ') == ['a', 'b', 'c']
 
 
-def test_words():
-    assert words("word's 'plural' form") == ['word', "'s", "'plural'", 'form']
+def test_is_quote():
+    assert is_quote('abc') == False
+    assert is_quote('"abc') == False
+    assert is_quote('"abc"') == True
 
 
 def test_lexemes():
+    assert lexemes("word's plural form") == ['word', "'s", "plural", 'form']
     assert lexemes('it is "words"') == ['it', 'is', '"words"']
 
 

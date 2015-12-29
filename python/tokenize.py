@@ -38,8 +38,6 @@ def tokenize(paragraph):
             tokens[-1].append([])
             for lexeme in line:
                 word_class = classify(lexeme)
-                if word_class.__name__ == 'Complementizer':
-                    print(lexeme)
                 token = word_class(lexeme)
                 tokens[-1][-1].append(token)
     return tokens

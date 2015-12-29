@@ -1,6 +1,6 @@
 import pytest
 
-from plain_english.syntax.categories import (
+from plain_english.python.categories import (
     Clitic,
     Complementizer,
     Determiner,
@@ -8,11 +8,10 @@ from plain_english.syntax.categories import (
     Number,
     Quote,
     Subordinator,
-    Variable,
     Verb,
 )
-from plain_english.syntax.word import Word
-from plain_english.syntax.parse import (
+from plain_english.python.word import Word
+from plain_english.python.parse import (
     PhrasesCannotMerge,
     first,
     last,
@@ -20,7 +19,7 @@ from plain_english.syntax.parse import (
     merge,
     garden_path,
 )
-from plain_english.syntax.parse import parse
+from plain_english.python.parse import parse
 
 
 def test_first():
@@ -137,7 +136,6 @@ def test_parse_single_clause():
             [
                 Determiner('a'),
                 Noun('Number'),
-                Variable('N'),
                 Verb('has'),
                 Determiner('a'),
                 Noun('Factorial'),
@@ -151,7 +149,6 @@ def test_parse_single_clause():
         specifier=Noun(
             'Number',
             specifier=Determiner('a'),
-            complement=Variable('N'),
         ),
         complement=Noun(
             'Factorial',

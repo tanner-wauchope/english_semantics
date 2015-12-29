@@ -1,0 +1,34 @@
+# make class
+car C is entity E.
+C has new-price N.
+C has mileage M.
+
+# make method
+car C has used-price U.
+U is (new_price * mileage).
+
+# make method with two parameters
+car X has total-price T; car Y has total-price T.
+T is (X + Y).
+
+# instantiate class and call method
+make car X.
+X has new-price N.
+N is 10000.
+X has mileage M.
+M is 100000.
+X has cost C.
+say C.
+
+# make a different car by repeating the same steps
+make car Y.
+Y has new-price N.
+N is 10000.
+Y has mileage M.
+M is 100000.
+Y has cost C.
+say C.
+
+# call a method that takes two cars
+X has total-price T; Y has total-price T.
+say T.
