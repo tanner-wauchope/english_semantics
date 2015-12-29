@@ -1,4 +1,4 @@
-# plain_english
+# plain_english (pre-alpha)
 This package provides tools for translating English into Python. This project is currently in a pre-alpha state, but many tested modules have already been written and more tested modules are coming soon.
 
 The choice of keywords are inspired by the top-10, non-pronoun English words. These keywords can be organized into six logical groups:
