@@ -60,7 +60,7 @@ def lexemes(clause) -> list:
     :param str clause: one line of english text
     :return: basic tokens, quotes, and parentheticals
     """
-    clause = clause.strip(':\n') + '\n'
+    clause = clause.strip().strip(':') + '\n'
     results = []
     lexeme = ''
     for char in clause:
@@ -82,6 +82,5 @@ def scan(paragraph):
         sentence = validate_sentence(sentence)
         sentences.append([])
         for clause in sentence.split(',\n\t'):
-            clause = clause.strip()
             sentences[-1].append(lexemes(clause))
     return sentences
