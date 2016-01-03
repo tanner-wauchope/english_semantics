@@ -6,9 +6,7 @@ from plain_english.python.scan import (
     InvalidClause,
     validate_paragraph,
     validate_sentence,
-    validate_clause,
-    split,
-    is_quote,
+    complete,
     lexemes,
 )
 from plain_english.python.scan import scan
@@ -24,21 +22,14 @@ def test_validate_sentence():
         validate_sentence('abc \n abc,\n\t abc')
 
 
-def test_validate_clause():
-    with pytest.raises(InvalidClause):
-        validate_clause('"abc" abc')
-    with pytest.raises(InvalidClause):
-        validate_clause('abc " abc')
-
-
-def test_split():
-    assert split('a b c ', ' ') == ['a', 'b', 'c']
-
-
-def test_is_quote():
-    assert is_quote('abc') == False
-    assert is_quote('"abc') == False
-    assert is_quote('"abc"') == True
+def test_complete():
+    assert complete('abc') == True
+    assert complete('123') == True
+    assert complete("'") == True
+    assert complete('"ab') == False
+    assert complete('"abc"') == True
+    assert complete('(pl. matrices') == False
+    assert complete('(pl. matrices)') == True
 
 
 def test_lexemes():

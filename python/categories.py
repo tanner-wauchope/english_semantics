@@ -94,6 +94,19 @@ class Number(Word):
         return self.head
 
 
+class Parenthetical(Word):
+    """ Comments, irregular form decorations, and embedded Python. """
+    PATTERN = r'(.+)'
+    COMPLEMENTS = {'Noun', 'Verb'}
+
+    def python(self):
+        try:
+            compile(self.head, '<string>', 'eval')
+            return self.head[1:-1]
+        except SyntaxError:
+            return ''
+
+
 class Preposition(Word):
     """ The class of prepositions. """
     KEYWORDS = {'of'}
