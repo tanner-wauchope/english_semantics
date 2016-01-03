@@ -15,10 +15,10 @@ class InvalidSentence(SyntaxError):
     pass
 
 
-def validate_paragraph(paragraph):
+def validate_paragraph(paragraph) -> str:
     """
     Checks if the paragraph ends with a period.
-    :param paragraph: text that may contain possessives or embedded quotes
+    :param str paragraph: text that may contain possessives or embedded quotes
     """
     if paragraph.strip().endswith('.'):
         return paragraph.strip()
@@ -26,10 +26,10 @@ def validate_paragraph(paragraph):
         raise InvalidParagraph('A paragraph should end with a period')
 
 
-def validate_sentence(sentence):
+def validate_sentence(sentence) -> str:
     """
     Checks that the sentence doesn't split clauses into multiple lines.
-    :param sentence: a sentence that may be spread across multiple lines
+    :param str sentence: a sentence that may be spread across multiple lines
     """
     if len(sentence.split('\n')) is len(sentence.split(',\n\t')):
         return sentence.strip()
@@ -37,22 +37,22 @@ def validate_sentence(sentence):
         raise InvalidSentence('Contains more lines than clauses')
 
 
-def complete(text):
-    phrase = text.lstrip()
-    if not phrase or phrase[0] not in '"(':
-        return True
-
-    quote = (
-        phrase[0] == '"' and
-        phrase[-1] == '"' and
-        (len(phrase) - len(phrase.strip('\\'))) % 2 == 0
+def closed(text) -> bool:
+    """
+    :param str text: text that may have an unclosed delimiter
+    :return: whether the text has an unclosed delimiter
+    """
+    is_quote = (
+        text[0] == '"' and
+        text[-1] == '"' and
+        (len(text) - len(text.strip('\\'))) % 2 == 0
     )
-    parenthetical = (
-        phrase[0] == '(' and
-        phrase[-1] == ')' and
-        phrase.count('(') == phrase.count(')')
+    is_parenthetical = (
+        text[0] == '(' and
+        text[-1] == ')' and
+        text.count('(') == text.count(')')
     )
-    return quote or parenthetical
+    return is_quote or is_parenthetical
 
 
 def lexemes(clause) -> list:
@@ -61,19 +61,22 @@ def lexemes(clause) -> list:
     :return: basic tokens, quotes, and parentheticals
     """
     clause = clause.strip().strip(':') + '\n'
+    must_capture = string.whitespace + "'"
     results = []
     lexeme = ''
     for char in clause:
-        if char in string.whitespace + "'" and complete(lexeme):
+        lexeme = lexeme.lstrip()
+        unopened = not lexeme or lexeme[0] not in '"('
+        if char in must_capture and (unopened or closed(lexeme)):
             results.append(lexeme.strip())
             lexeme = ''
         lexeme += char
     return [result for result in results if result]
 
 
-def scan(paragraph):
+def scan(paragraph) -> list:
     """
-    :param paragraph: text without empty lines or invisible whitespace
+    :param str paragraph: text without empty lines or invisible whitespace
     :return: sentences that contain lines that contain lexemes
     """
     paragraph = validate_paragraph(paragraph)

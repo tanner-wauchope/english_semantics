@@ -5,7 +5,7 @@ from plain_english.python.scan import (
     InvalidSentence,
     validate_paragraph,
     validate_sentence,
-    complete,
+    closed,
     lexemes,
 )
 from plain_english.python.scan import scan
@@ -21,14 +21,11 @@ def test_validate_sentence():
         validate_sentence('abc \n abc,\n\t abc')
 
 
-def test_complete():
-    assert complete('abc') == True
-    assert complete('123') == True
-    assert complete("'") == True
-    assert complete('"ab') == False
-    assert complete('"abc"') == True
-    assert complete('(pl. matrices') == False
-    assert complete('(pl. matrices)') == True
+def test_closed():
+    assert closed('"ab') == False
+    assert closed('"abc"') == True
+    assert closed('(pl. matrices') == False
+    assert closed('(pl. matrices)') == True
 
 
 def test_lexemes():
