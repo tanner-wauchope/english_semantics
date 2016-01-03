@@ -44,7 +44,7 @@ def scan(paragraph) -> list:
     :return: sentences that contain lines that contain lexemes
     """
     sentences = []
-    for sentence in ('#' + paragraph).strip('.\n')[1:].split('.\n\t'):
+    for sentence in ('#' + paragraph).strip('. \n\t')[1:].split('.\n\t'):
         sentences.append([])
         for clause in sentence.strip().split(',\n\t'):
             sentences[-1].append(lexemes(clause))

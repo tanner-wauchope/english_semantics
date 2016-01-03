@@ -1,7 +1,6 @@
-from .tokenize import tokenize
-from .parse import parse
-from .scan import scan
-from .codify import codify
+import code
+
+from plain_english.python import scan, tokenize, parse, codify, register
 
 
 def interpret(english):
@@ -11,12 +10,36 @@ def interpret(english):
              an Exception object if the English was invalid
     """
     try:
-        lexemes = scan(english)
-        tokens = tokenize(lexemes)
-        trees = parse(tokens)
-        return codify(trees)
+        lexemes = scan.scan(english)
+        tokens = tokenize.tokenize(lexemes)
+        trees = parse.parse(tokens)
+        return codify.codify(trees)
     except Exception as e:
         return e
+
+
+def compile_command(english, filename='', symbol='exec'):
+    last = english[-1].split('\n')[-1]
+    if not last.strip() or last == last.lstrip():
+        interpretation = interpret(english)
+        if type(interpretation) in (SyntaxError, ValueError, OverflowError):
+            raise SyntaxError
+        elif isinstance(interpretation, Exception):
+            raise SyntaxError(str(interpretation))
+        else:
+            return compile(interpretation, filename, symbol)
+
+
+def run_interpreter():
+    noun, verb, _ = register.register()
+    default_scope = {
+        'noun': noun,
+        'verb': verb,
+        '_': _,
+    }
+    interpreter = code.InteractiveConsole(locals=default_scope)
+    interpreter.compile = compile_command
+    interpreter.interact(banner='Plain English v0.1')
 
 
 class Discourse:
@@ -31,13 +54,11 @@ class Discourse:
 
     def interpret(self, line):
         """
-        Save the line after removing invisible white space.
         If the line completes a paragraph, parse it and reset it.
         """
-        self.paragraph += line.rstrip()
-        if line.isspace():
+        if self.paragraph and not line.startswith('\t'):
             interpretation = interpret(self.paragraph)
-            self.paragraph = ''
+            self.paragraph = line + '\n'
             return interpretation
         else:
-            self.paragraph += '\n'
+            self.paragraph += line + '\n'

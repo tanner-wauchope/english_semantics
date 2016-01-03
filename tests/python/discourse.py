@@ -30,6 +30,7 @@ def test_interpret_standalone():
 
 def test_interpret_discourse():
     discourse = Discourse()
-    for line in factorial_english.split('\n')[:-1]:
-        discourse.interpret(line)
-    assert discourse.interpret('\n') == factorial_python
+    for line in factorial_english.split('\n'):
+        if line.strip():
+            discourse.interpret(line)
+    assert discourse.interpret('next paragraph') == factorial_python

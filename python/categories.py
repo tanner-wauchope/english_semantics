@@ -101,7 +101,7 @@ class Parenthetical(Word):
 
     def python(self):
         try:
-            compile(self.head, '<string>', 'eval')
+            compile(self.head, '', 'eval')
             return self.head[1:-1]
         except SyntaxError:
             return ''
