@@ -1,42 +1,6 @@
 import string
 
 
-class InvalidParagraph(SyntaxError):
-    """
-    Raised when a paragraph does not end with a period.
-    """
-    pass
-
-
-class InvalidSentence(SyntaxError):
-    """
-    Raised when a paragraph contains more lines the clauses.
-    """
-    pass
-
-
-def validate_paragraph(paragraph) -> str:
-    """
-    Checks if the paragraph ends with a period.
-    :param str paragraph: text that may contain possessives or embedded quotes
-    """
-    if paragraph.strip().endswith('.'):
-        return paragraph.strip()
-    else:
-        raise InvalidParagraph('A paragraph should end with a period')
-
-
-def validate_sentence(sentence) -> str:
-    """
-    Checks that the sentence doesn't split clauses into multiple lines.
-    :param str sentence: a sentence that may be spread across multiple lines
-    """
-    if len(sentence.split('\n')) is len(sentence.split(',\n\t')):
-        return sentence.strip()
-    else:
-        raise InvalidSentence('Contains more lines than clauses')
-
-
 def closed(text) -> bool:
     """
     :param str text: text that may have an unclosed delimiter
@@ -79,11 +43,9 @@ def scan(paragraph) -> list:
     :param str paragraph: text without empty lines or invisible whitespace
     :return: sentences that contain lines that contain lexemes
     """
-    paragraph = validate_paragraph(paragraph)
     sentences = []
-    for sentence in paragraph[:-1].split('.\n'):
-        sentence = validate_sentence(sentence)
+    for sentence in ('#' + paragraph).strip('.\n')[1:].split('.\n\t'):
         sentences.append([])
-        for clause in sentence.split(',\n\t'):
+        for clause in sentence.strip().split(',\n\t'):
             sentences[-1].append(lexemes(clause))
     return sentences

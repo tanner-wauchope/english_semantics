@@ -5,11 +5,11 @@ from plain_english.python.discourse import (
 
 factorial_english = """
 a Number has a Factorial.
-N is the Number.
-if N is 0,
-\tthe Factorial is 1.
-or,
-\tthe Factorial is "N * Factorial(N - 1)".
+\tN is the Number.
+\tif N is 0,
+\t\tthe Factorial is 1.
+\tor,
+\t\tthe Factorial is "N * Factorial(N - 1)".
 """
 
 factorial_python = """

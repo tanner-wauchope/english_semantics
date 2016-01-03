@@ -96,7 +96,7 @@ class Number(Word):
 
 class Parenthetical(Word):
     """ Comments, irregular form decorations, and embedded Python. """
-    PATTERN = r'(.+)'
+    PATTERN = r'\(.+\)'
     COMPLEMENTS = {'Noun', 'Verb'}
 
     def python(self):

@@ -1,24 +1,8 @@
-import pytest
-
 from plain_english.python.scan import (
-    InvalidParagraph,
-    InvalidSentence,
-    validate_paragraph,
-    validate_sentence,
     closed,
     lexemes,
+    scan,
 )
-from plain_english.python.scan import scan
-
-
-def test_validate_paragraph():
-    with pytest.raises(InvalidParagraph):
-        validate_paragraph('abc.\n abc\n')
-
-
-def test_validate_sentence():
-    with pytest.raises(InvalidSentence):
-        validate_sentence('abc \n abc,\n\t abc')
 
 
 def test_closed():
@@ -36,10 +20,10 @@ def test_lexemes():
 def test_scan():
     paragraph = (
         "A whole numbers N has a factorial.\n"
-        "If N is 0,\n"
-        "\tthe factorial is 1.\n"
-        "Otherwise,\n"
-        "\tit is N times the factorial of N minus 1.\n"
+        "\tIf N is 0,\n"
+        "\t\tthe factorial is 1.\n"
+        "\tOtherwise,\n"
+        "\t\tit is N times the factorial of N minus 1.\n"
     )
     assert scan(paragraph) == [
         [
