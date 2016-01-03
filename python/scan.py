@@ -15,17 +15,6 @@ class InvalidSentence(SyntaxError):
     pass
 
 
-class InvalidClause(SyntaxError):
-    """
-    Raised when a line starts with a quote or has unclosed quotes.
-    """
-    pass
-
-
-class InvalidToken(SyntaxError):
-    pass
-
-
 def validate_paragraph(paragraph):
     """
     Checks if the paragraph ends with a period.

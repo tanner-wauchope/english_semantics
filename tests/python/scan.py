@@ -3,7 +3,6 @@ import pytest
 from plain_english.python.scan import (
     InvalidParagraph,
     InvalidSentence,
-    InvalidClause,
     validate_paragraph,
     validate_sentence,
     complete,
