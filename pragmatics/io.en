@@ -1,7 +1,0 @@
-
-"Definitions of 'say'".
-(print(X)) to say X.
-X is (input()) if I say X.
-If a File F says X:
-    X is (open(F).read()).
-    Or, (open(F).write(X)).
