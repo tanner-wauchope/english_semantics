@@ -1,6 +1,7 @@
 import pytest
 
-from plain_english.python.categories import (
+from plain_english.python.grammar import (
+    Tree,
     Clitic,
     Complementizer,
     Determiner,
@@ -10,9 +11,8 @@ from plain_english.python.categories import (
     Subordinator,
     Verb,
 )
-from plain_english.python.word import Word
 from plain_english.python.parse import (
-    PhrasesCannotMerge,
+    ParsingError,
     first,
     last,
     contains,
@@ -23,16 +23,16 @@ from plain_english.python.parse import parse
 
 
 def test_first():
-    assert first(Word('a')) == Word('a')
-    assert first(Word('b', specifier=Word('a'))) == Word('a')
-    right_branching_tree = Word('a', complement=Word('b'))
+    assert first(Tree('a')) == Tree('a')
+    assert first(Tree('b', specifier=Tree('a'))) == Tree('a')
+    right_branching_tree = Tree('a', complement=Tree('b'))
     assert first(right_branching_tree) == right_branching_tree
 
 
 def test_last():
-    assert last(Word('a')) == Word('a')
-    assert last(Word('a', complement=Word('b'))) == Word('b')
-    left_branching_tree = Word('b', specifier=Word('a'))
+    assert last(Tree('a')) == Tree('a')
+    assert last(Tree('a', complement=Tree('b'))) == Tree('b')
+    left_branching_tree = Tree('b', specifier=Tree('a'))
     assert last(left_branching_tree) == left_branching_tree
 
 
@@ -96,7 +96,7 @@ def test_merge_specified_by():
 
 
 def test_merge_error():
-    with pytest.raises(PhrasesCannotMerge):
+    with pytest.raises(ParsingError):
         assert merge(Subordinator('if'), Noun('it'))
 
 
@@ -187,5 +187,5 @@ def test_parse_error():
             ],
         ]
     ]
-    with pytest.raises(PhrasesCannotMerge):
+    with pytest.raises(ParsingError):
         parse(paragraph)
