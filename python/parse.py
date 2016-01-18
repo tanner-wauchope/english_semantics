@@ -1,5 +1,5 @@
 
-class PhrasesCannotMerge(Exception):
+class ParsingError(SyntaxError):
     """
     Thrown when two phrases cannot be merged.
     The first phrase cannot specify the second,
@@ -58,7 +58,7 @@ def merge(tree, other):
     elif contains(first(other).SPECIFIED_BY, tree):
         first(other).specifier = tree
         return other
-    raise PhrasesCannotMerge([tree, other])
+    raise ParsingError('Phrases cannot merge: ' + str([tree, other]))
 
 
 def garden_path(tokens):
@@ -70,11 +70,11 @@ def garden_path(tokens):
     for token in tokens[1:]:
         try:
             trees[-1] = merge(trees[-1], token)
-        except PhrasesCannotMerge:
+        except ParsingError:
             try:
                 trees = garden_path(trees)
                 trees[-1] = merge(trees[-1], token)
-            except PhrasesCannotMerge:
+            except ParsingError:
                 trees.append(token)
     if len(tokens) != len(trees):
         return garden_path(trees)
@@ -87,6 +87,7 @@ def parse(block):
     :param block: sentences that contain lines that contain tokens
     :return: a list of lists of binary trees that represent sentences
     """
+    # TODO: delete the need for this
     sentences = []
     for sentence in block:
         phrases = []
@@ -95,6 +96,81 @@ def parse(block):
             if len(new) == 1:
                 phrases.append(new[0])
             else:
-                raise PhrasesCannotMerge(new)
+                raise ParsingError('Phrases cannot merge: ' + str(new))
         sentences.append(phrases)
     return sentences
+
+
+# Experimental parser changes
+
+
+def initialize_chart(tokens):
+    total = len(tokens)
+    chart = [[[] * total] * total]
+    for i in range(total):
+        for j in range(total):
+            cell = chart[i][j]
+            if i == j:
+                cell.append(tokens[i])
+            elif i > j:
+                cell.append(None)
+    return chart
+
+
+def is_dependent(tree, other):
+    """
+    Minimal attachment takes precedence over late closure.
+    :param tree: a binary-branching dependency tree of words
+    :param other: a binary-branching dependency tree of words
+    :return: whether tree can merge with other
+    """
+    return (
+        contains(last(tree).COMPLEMENTED_BY, other) or
+        contains(tree.SPECIFIES, first(other)) or
+        contains(other.COMPLEMENTS, last(tree)) or
+        contains(first(other).SPECIFIED_BY, tree)
+    )
+
+
+def dependents(candidates, parent) -> list:
+    return [token for token in candidates if is_dependent(token, parent)]
+
+
+def build_chart(tokens) -> list:
+    """Alternative parser implementation based on CYK algorithm"""
+    total = len(tokens)
+    chart = initialize_chart(tokens)
+    for start in range(1, total):
+        for stop in range(start, total):
+            for partition in range(start, stop - 1):
+                head = tokens[partition]
+                left = chart[start][partition - 1]
+                right = chart[partition + 1][stop]
+                if dependents(left, head) and dependents(right, head):
+                    chart[start][stop].append(head)
+    return chart
+
+
+def trace(chart, i, j) -> 'Word':
+    heads = chart[i][j]
+    if len(heads) == 0:
+        raise ParsingError('No valid parse: ' + str(chart))
+    elif len(heads) > 1:
+        raise ParsingError('Global ambiguity: ' + str(chart))
+
+    head = heads[0]
+    if head is None:
+        return head
+
+    if head.index > i:
+        head.specifier = trace(chart, i, head.index - 1)
+    if head.index < j:
+        head.complement = trace(chart, head.index + 1, j)
+    return head
+
+
+def cyk_parse(tokens) -> 'Word':
+    for i, token in enumerate(tokens):
+        token.index = i
+    chart = build_chart(tokens)
+    return trace(chart, 0, len(tokens))
