@@ -1,3 +1,4 @@
+import pprint
 import re
 
 from plain_english.python import grammar
@@ -88,35 +89,14 @@ def tokenize(line) -> list:
     return tokens
 
 
-#
-# def non_destructive_split(text, delimiters):
-#     result = []
-#     for char in text:
-#         if char in delimiters or not result or result[-1][-1] in delimiters:
-#             result.append([char])
-#         else:
-#             result[-1].append(char)
-#     return [''.join(segment) for segment in result]
-#
-#
-# def nest(sequence, opener, closer):
-#     stack = [[]]
-#     for piece in non_destructive_split(sequence, opener + closer):
-#         if piece in opener:
-#             stack.append([])
-#         elif piece in closer:
-#             assert len(stack) > 1, 'Unopened delimiter'
-#             stack[-2].append(stack.pop())
-#         else:
-#             stack[-1].append(piece)
-#     assert len(stack) == 1, 'Unclosed delimiter'
-#     return stack.pop()
-
-
-def conjuncts(phrases) -> list:
+def families_at_outer_level(phrases) -> list:
+    """
+    :param list phrases: phrases with indentation >= the first phrase
+    :return: Families of lines rooted at the first phrase's level.
+    """
+    level = phrases[0].level
     result = []
     for phrase in phrases:
-        level = phrases[0].level
         if phrase.level == level:
             result.append([phrase])
         elif phrase.level > level:
@@ -128,10 +108,14 @@ def conjuncts(phrases) -> list:
 
 
 def indentation_hierarchy(phrases) -> grammar.Tree:
+    """
+    :param list phrases: lines with varying indentation
+    :return: a single tree mirroring the structure of the indented lines
+    """
     assert len(phrases) > 0
     parents = []
-    for conjunct in conjuncts(phrases):
-        parent, children = conjunct[0], conjunct[1:]
+    for family in families_at_outer_level(phrases):
+        parent, children = family[0], family[1:]
         if children:
             complement = indentation_hierarchy(children)
             parent.complement.append(complement)
@@ -147,38 +131,198 @@ def indentation_hierarchy(phrases) -> grammar.Tree:
         )
 
 
-#
-# def deindent(stack, current_level) -> None:
-#     while current_level != stack[-1].level:
-#         phrase = stack.pop()
-#         top = stack[-1]
-#         top.complement.append(phrase)
-#
-#
-# def indentation_hierarchy(phrases) -> list:
-#     stack = [grammar.Tree('', level=0)]
-#     for phrase in phrases:
-#         top = stack[-1]
-#         if phrase.level > top.level:
-#             new = grammar.And('and', complement=[phrase], level=phrase.level)
-#             stack.append(new)
-#         elif phrase.level == top.level:
-#             top.complement.append(phrase)
-#         else:
-#             deindent(stack, phrase.level)
-#             top.complement.append(phrase)
-#     deindent(stack, 0)
-#     assert len(stack) == 1
-#     return stack.pop()
-
-
-def lex(text):
+def lex(text) -> grammar.Tree:
+    """
+    :param text: an English text
+    :return: a single tree representing all of the text
+    """
     phrases = []
     unit = None
     for line in split(text, delimiters='\n'):
         if not line.isspace():
             level, unit = indentation(line, unit)
             tokens = tokenize(line)
-            phrase = grammar.Tree('', specifier=tokens, level=level)
+            phrase = parse(tokens)
             phrases.append(phrase)
     return indentation_hierarchy(phrases)
+
+# Parser
+
+class ParsingError(SyntaxError):
+    """
+    Thrown when two phrases cannot be merged.
+    The first phrase cannot specify the second,
+    and the second phrase cannot complement the first.
+    """
+    pass
+
+
+def first(tree):
+    """
+    :param tree: a binary tree of constituencies
+    :return: the left-most node in the tree
+    """
+    if not tree.specifier:
+        return tree
+    return first(tree.specifier)
+
+
+def last(tree):
+    """
+    :param tree: a binary tree of constituencies
+    :return: the right-most node in the tree
+    """
+    if not tree.complement:
+        return tree
+    return last(tree.complement)
+
+
+def contains(word_classes, word):
+    """
+    :param word_class: a set of word classes
+    :param word: a word that could be an instance of the word classes
+    :return: whether the word is an instance of any of the word classes
+    """
+    for word_class in word_classes:
+        if isinstance(word, word_class):
+            return True
+
+
+def merge(tree, other):
+    """
+    Minimal attachment takes precedence over late closure.
+    :param tree: a binary-branching dependency tree of words
+    :param other: a binary-branching dependency tree of words
+    :return: one of the trees, except with the other tree added as a subtree
+    """
+    if contains(last(tree).COMPLEMENTED_BY, other):
+        last(tree).complement = other
+        return tree
+    elif contains(tree.SPECIFIES, first(other)):
+        first(other).specifier = tree
+        return other
+    elif contains(other.COMPLEMENTS, last(tree)):
+        last(tree).complement = other
+        return tree
+    elif contains(first(other).SPECIFIED_BY, tree):
+        first(other).specifier = tree
+        return other
+    raise ParsingError('Phrases cannot merge: ' + str([tree, other]))
+
+
+def garden_path(tokens):
+    """
+    :param tokens: a list of tokens
+    :return: a list of python trees
+    """
+    trees = tokens[:1]
+    for token in tokens[1:]:
+        try:
+            trees[-1] = merge(trees[-1], token)
+        except ParsingError:
+            try:
+                trees = garden_path(trees)
+                trees[-1] = merge(trees[-1], token)
+            except ParsingError:
+                trees.append(token)
+    if len(tokens) == len(trees):
+        return trees
+    else:
+        return garden_path(trees)
+
+
+def parse(tokens):
+    """
+    :param block: sentences that contain lines that contain tokens
+    :return: a list of lists of binary trees that represent sentences
+    """
+    new = garden_path(tokens)
+    if len(new) == 1:
+        return new[0]
+    else:
+        raise ParsingError('Phrases cannot merge: ' + str(new))
+
+
+# Experimental parser changes
+
+
+def initialize_chart(tokens):
+    total = len(tokens)
+    chart = []
+    for i in range(total):
+        chart.append([])
+        for j in range(total):
+            chart[i].append([])
+            cell = chart[i][j]
+            if j == i:
+                cell.append(tokens[i])
+            elif j < i:
+                cell.append(None)
+    return chart
+
+
+def is_dependent(tree, other):
+    """
+    Minimal attachment takes precedence over late closure.
+    :param tree: a binary-branching dependency tree of words
+    :param other: a binary-branching dependency tree of words
+    :return: whether tree can merge with other
+    """
+    return (
+        contains(last(tree).COMPLEMENTED_BY, other) or
+        contains(tree.SPECIFIES, first(other)) or
+        contains(other.COMPLEMENTS, last(tree)) or
+        contains(first(other).SPECIFIED_BY, tree)
+    )
+
+
+def merges(trees, others) -> list:
+    for tree in trees:
+        for other in others:
+            if is_dependent(tree, other):
+                return True
+
+
+def build_chart(tokens) -> list:
+    """Alternative parser implementation based on CYK algorithm"""
+    chart = initialize_chart(tokens)
+    for stop in range(len(tokens)):
+        for start in reversed(range(stop + 1)):
+            for k in range(start, stop + 1):
+                head = [tokens[k]]
+                left = start == k or merges(chart[start][k - 1], head)
+                right = k == stop or merges(head, chart[k + 1][stop])
+                if left and right and head[0] not in chart[start][stop]:
+                    chart[start][stop].extend(head)
+    return chart
+
+
+def trace(chart, i, j) -> grammar.Tree:
+    heads = chart[i][j]
+    if len(heads) > 1:
+        pprint.pprint(chart)
+        print(i)
+        print(j)
+        for head in heads:
+            print(head.head)
+        raise ParsingError('Global ambiguity: ' + str(heads))
+
+    head = heads[0]
+    if head is None:
+        return head
+
+    if head.index > i:
+        head.specifier = trace(chart, i, head.index - 1)
+    if head.index < j:
+        head.complement = trace(chart, head.index + 1, j)
+    return head
+
+
+def parse(tokens) -> grammar.Tree:
+    for i, token in enumerate(tokens):
+        token.index = i
+    chart = build_chart(tokens)
+    if len(chart[0][len(tokens) - 1]) == 0:
+        pprint.pprint(chart)
+        raise ParsingError('No valid parse: ' + str(tokens))
+    return trace(chart, 0, len(tokens) - 1)

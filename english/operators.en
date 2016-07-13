@@ -1,0 +1,15 @@
+
+"Arithmetic operators".
+X plus Y is (X + Y).
+X minus Y is (X - Y).
+X times Y is (X * Y).
+X over Y is (X / Y).
+
+"Comparison operators".
+X is greater than Y if (X > Y).
+X is less than Y if (X < Y).
+X is in Y is if (X in Y).
+
+"Possession operators".
+X of Y is X Y has.
+X 's Y is Y X has.

@@ -1,0 +1,14 @@
+/plain_english/semantics/predicates.py has "_add_s".
+
+
+A Text T has an "S-form".
+The S-form is (_add_s(T)).
+
+"Irregular S-forms".
+The S-form of "are" is "is".
+The S-form of "have" is "has".
+The S-form of "do" is "does".
+The S-form of "say" is "says".
+The S-form of "go" is "goes".
+The S-form of "it" is "they".
+The S-form of "I" is "we".

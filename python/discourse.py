@@ -1,6 +1,7 @@
 import code
 
-from plain_english.python import scan, tokenize, parse, codify, register
+import lex
+from plain_english.python import parse, codify, register
 
 
 def interpret(english):
@@ -10,10 +11,9 @@ def interpret(english):
              an Exception object if the English was invalid
     """
     try:
-        lexemes = scan.scan(english)
-        tokens = tokenize.tokenize(lexemes)
-        trees = parse.parse(tokens)
-        return codify.codify(trees)
+        tokens = lex.lex(english)
+        phrases = parse.parse(tokens)
+        return codify.codify(phrases)
     except Exception as e:
         return e
 

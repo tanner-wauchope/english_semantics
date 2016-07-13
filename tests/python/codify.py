@@ -1,17 +1,17 @@
-from plain_english.python import categories
+from plain_english.python import grammar
 from plain_english.python import codify
 
 
 def test_clause():
-    element = categories.Verb(
+    element = grammar.Verb(
         'has',
-        specifier=categories.Noun(
+        specifier=grammar.Noun(
             'Number',
-            specifier=categories.Determiner('a')
+            specifier=grammar.Determiner('a')
         ),
-        complement=categories.Noun(
+        complement=grammar.Noun(
             'Factorial',
-            specifier=categories.Determiner('a')
+            specifier=grammar.Determiner('a')
         )
     )
     actual = codify.clause(element, codify.Scope())
@@ -25,16 +25,16 @@ def test_clause():
 
 def test_sentence():
     element = [
-        categories.Subordinator(
+        grammar.Subordinator(
             'if',
-            complement=categories.Verb(
+            complement=grammar.Verb(
                 'is',
-                specifier=categories.Noun('X')
+                specifier=grammar.Noun('X')
             )
         ),
-        categories.Verb(
+        grammar.Verb(
             'has',
-            specifier=categories.Noun('X')
+            specifier=grammar.Noun('X')
         )
     ]
     actual = codify.sentence(element, codify.Scope())
@@ -51,34 +51,34 @@ def test_sentence():
 def test_paragraph():
     element = [
         [
-            categories.Verb(
+            grammar.Verb(
                 'does',
-                specifier=categories.Noun(
+                specifier=grammar.Noun(
                     'Entity',
-                    specifier=categories.Determiner('an')
+                    specifier=grammar.Determiner('an')
                 )
             )
         ],
         [
-            categories.Verb(
+            grammar.Verb(
                 'is',
-                specifier=categories.Noun(
+                specifier=grammar.Noun(
                     'Entity',
-                    specifier=categories.Determiner('the')
+                    specifier=grammar.Determiner('the')
                 )
             )
         ],
         [
-            categories.Subordinator(
+            grammar.Subordinator(
                 'if',
-                complement=categories.Verb(
+                complement=grammar.Verb(
                     'is',
-                    specifier=categories.Noun('X')
+                    specifier=grammar.Noun('X')
                 )
             ),
-            categories.Verb(
+            grammar.Verb(
                 'has',
-                specifier=categories.Noun('X')
+                specifier=grammar.Noun('X')
             )
         ]
     ]
@@ -128,34 +128,34 @@ def test_flatten():
 def test_codify():
     element = [
         [
-            categories.Verb(
+            grammar.Verb(
                 'does',
-                specifier=categories.Noun(
+                specifier=grammar.Noun(
                     'Entity',
-                    specifier=categories.Determiner('an')
+                    specifier=grammar.Determiner('an')
                 )
             )
         ],
         [
-            categories.Verb(
+            grammar.Verb(
                 'is',
-                specifier=categories.Noun(
+                specifier=grammar.Noun(
                     'Entity',
-                    specifier=categories.Determiner('the')
+                    specifier=grammar.Determiner('the')
                 )
             )
         ],
         [
-            categories.Subordinator(
+            grammar.Subordinator(
                 'if',
-                complement=categories.Verb(
+                complement=grammar.Verb(
                     'is',
-                    specifier=categories.Noun('X')
+                    specifier=grammar.Noun('X')
                 )
             ),
-            categories.Verb(
+            grammar.Verb(
                 'has',
-                specifier=categories.Noun('X')
+                specifier=grammar.Noun('X')
             )
         ]
     ]

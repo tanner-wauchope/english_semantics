@@ -1,0 +1,38 @@
+
+# Data Definition
+
+a person has a job
+a job has a salary
+
+a job is "programmer"
+the salary is 0
+a person is "person1"
+the job is "programmer"
+a person is "person2"
+the job is "programmer"
+
+
+# Data Retrieval
+
+a person is "person1"
+say the salary # prints 0
+
+a job is "programmer"
+say the person # prints "person1" or "person2"
+
+
+# Phrase Definition
+
+a person loves a salary > 0
+
+a person is "person1"
+the person loves the salary # prints ContradictionError
+
+
+# Recursive Definition
+
+0 has a factorial
+the factorial is 1
+
+0 has factorial 1
+a number "N > 0" has factorial "N * factorial(N - 1)"

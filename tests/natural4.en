@@ -1,0 +1,19 @@
+
+occupation "student" has salary 0
+occupation "programmer" has salary 1
+
+Tanner has occupation "student"
+Tanner has occupation "programmer"
+Tanner has occupations
+the occupations    # student, programmer
+
+Tanner loves an occupation
+the occupation has a salary
+the occupation    # programmer
+
+
+0 has factorial 1
+n > 0 has factorial "n * factorial(n - 1)"
+
+3 has a factorial
+the factorial    # 6

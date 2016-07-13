@@ -36,6 +36,7 @@ class Tree:
         self.specifier = specifier or []
         self.complement = complement or []
         self.level = level
+        self.index = 0
 
     def __eq__(self, other):
         """
@@ -240,7 +241,91 @@ class Verb(Tree):
             complement=python(self.complement, prefix='(', suffix=')'),
         )
 
+# Experimental non-dependency items
+# support article, noun, verb, subordinator, quote, preposition,
+#  number, or, and, complementizer, clitic
 
+# Verbs
+class Sentence(Tree):
+    rules = (
+        ('CompoundingSentence', 'Sentence'),
+        ('NounPhrase', 'Predicate'),
+        ('SubordinateClause', 'Sentence'),
+        ('Sentence', 'SubordinateClause'),
+    )
+
+class NounPhrase(Tree):
+    rules = (
+        ('Noun',),
+        ('Primitive',),
+        ('Determiner', 'Noun'),
+        ('Noun', 'Primitive'),
+        ('NounPhrase', 'PrepositionalPhrase'),
+        ('NounPhrase', 'RelativeClause'),
+        ('CompoundingNounPhrase', 'NounPhrase'),
+    )
+
+class VerbPhrase(Tree):
+    rules = (
+        ('Primitive'),
+        ('Verb', 'NounPhrase'),
+        ('CompoundingVerbPhrase', 'VerbPhrase'),
+    )
+
+class RelativeClause:
+    rules = (
+        ('That', 'VerbPhrase'),
+        ('That', 'Sentence'),
+    )
+
+# *, /, of
+class PrepositionalPhrase:
+    rules = (
+        ('*', 'NounPhrase'),
+        ('/', 'NounPhrase'),
+        ('of', 'NounPhrase'),
+    )
+
+# Conjunctions
+class Paragraph:
+    rules = (
+        ('Sentence', 'Sentence')
+    )
+
+class CompoundingVerbPhrase:
+    rules = (
+        ('And', 'VerbPhrase')
+    )
+
+class CompoundingNounPhrase:
+    rules = (
+        ('Or', 'NounPhrase')
+    )
+
+class CompoundingSentence:
+    rules = (
+        ('Sentence', 'And')
+    )
+
+# Conditions
+class SubordinateClause:
+    rules = (
+        ('Subordinator', 'Sentence')
+    )
+
+
+class ConjunctiveAdverbialPhrase:
+    rules = (
+        ('Or', 'SubordinateClause')
+    )
+
+# 's
+class Possessive:
+    rules = (
+        ('NounPhrase', 'Clitic')
+    )
+
+#TODO: should read rules out of a file here and attach them to the classes
 # This replaces the names in production rules with their values.
 # This is needed in Python because of the lack of forward declaration.
 categories = Tree.__subclasses__()

@@ -1,7 +1,7 @@
-from plain_english.python import categories
+from plain_english.python import grammar
 
 
-def phrases(tree, condition=(lambda x: isinstance(x, categories.Noun))):
+def phrases(tree, condition=(lambda x: isinstance(x, grammar.Noun))):
     result = []
     if hasattr(tree, 'specifier') and tree.specifier:
         result += phrases(tree.specifier, condition)
@@ -49,7 +49,7 @@ def clause(tree, scope):
         if line:
             results.append(line)
             scope.add(phrase)
-    suffix = '()' if isinstance(tree, categories.Verb) else ''
+    suffix = '()' if isinstance(tree, grammar.Verb) else ''
     return results + [tree.python() + suffix]
 
 
