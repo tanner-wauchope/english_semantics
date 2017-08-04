@@ -1,3 +1,3 @@
-# plain_english (pre-alpha)
+# protolanguage (alpha)
 This is an experimental programming language with extensible syntax. Until the project is in beta, APIs may change frequently.
 
