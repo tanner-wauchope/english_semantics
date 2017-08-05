@@ -1,5 +1,4 @@
-from proto import lex
-
+from protolanguage import lex
 
 def test_lex():
     assert lex('\t_ Ab 12\n') == ['_', 'Ab', '12']
