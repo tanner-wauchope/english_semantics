@@ -89,12 +89,6 @@ def definition(conjuncts, db):
     return functools.reduce(conj, goals)
 
 
-def walk(key, scope):
-    if key in scope:
-        return interpolate(scope[key], scope)
-    return key
-
-
 def get_lines(query, scopes):
     seen = set()
     for scope in scopes:
