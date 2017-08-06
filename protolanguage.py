@@ -100,10 +100,10 @@ def get_lines(query, scopes):
 
 def run(block, db, scope):
     for lexemes in block: tokenize(lexemes, scope)
-    head = tuple(block[0])
+    head, body = tuple(block[0]), [tuple(lexemes) for lexemes in block[1:]]
     if block and db.get(head) is not True:
-        if len(block) > 1:
-            db[head] = definition(block[1:], db)
+        if body:
+            db[head] = definition(body, db)
         elif scope:
             return ''.join(get_lines(head, search(head, db)({})))
         else:
