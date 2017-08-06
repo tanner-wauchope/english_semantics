@@ -4,6 +4,7 @@ from protolanguage import (
     lex,
     Variable,
     tokenize,
+    guess_variable,
 )
 
 
@@ -61,3 +62,19 @@ def test_tokenize_identical_names_is_same_variable():
     lexemes, scope = ['X', 'X'], {}
     tokenize(lexemes, scope)
     assert lexemes[0] == lexemes[1] == scope['X']
+
+
+def test_guess_variable_on_constant_is_empty():
+    assert list(guess_variable(['constant'], ['constant'])) == []
+
+
+def test_guess_variable_matches_variable_to_constants():
+    consumer, consumed = (Variable('X'),), ('a', 'b')
+    assert list(guess_variable(consumer, consumed)) == [{consumer[0]: consumed}]
+
+
+def test_guess_variable_yields_ambiguous_possibilities():
+    x, y = Variable('X'), Variable('Y')
+    consumer, consumed = (x, y), ('a', 'b', 'c')
+    expected = [{x: ('a',), y: ('b', 'c')}, {x: ('a', 'b'), y: ('c',)}]
+    assert list(guess_variable(consumer, consumed)) == expected

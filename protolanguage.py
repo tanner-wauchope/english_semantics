@@ -24,7 +24,7 @@ def tokenize(lexemes, scope):
                 lexemes[i] = scope[lexeme]
 
 
-def guess_var(consumer, consumed):
+def guess_variable(consumer, consumed):
     if isinstance(consumer[0], Variable):
         for i in range(1, len(consumed) + 1):
             for scope in unify(consumer[1:], consumed[i:]):
@@ -39,8 +39,8 @@ def unify(statement1, statement2):
     elif statement1[0] == statement2[0]:
         yield from unify(statement1[1:], statement2[1:])
     else:
-        yield from guess_var(statement1, statement2)
-        yield from guess_var(statement2, statement1)
+        yield from guess_variable(statement1, statement2)
+        yield from guess_variable(statement2, statement1)
 
 
 def interpolate(statement, scope):
@@ -96,7 +96,6 @@ def get_lines(query, scopes):
         if result not in seen:
             seen.add(result)
             yield result
-
 
 
 def run(block, db, scope):
