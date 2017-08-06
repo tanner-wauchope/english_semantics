@@ -22,7 +22,6 @@ def tokenize(lexemes, scope):
             else:
                 scope[lexeme] = Variable(lexeme)
                 lexemes[i] = scope[lexeme]
-    return lexemes
 
 
 def guess_var(consumer, consumed):
@@ -107,8 +106,8 @@ def get_lines(query, scopes):
 
 
 def run(block, db, scope):
-    block = [tuple(tokenize(lexemes, scope)) for lexemes in block]
-    head = block[0]
+    for lexemes in block: tokenize(lexemes, scope)
+    head = tuple(block[0])
     if block and db.get(head) is not True:
         if len(block) > 1:
             db[head] = definition(block[1:], db)
