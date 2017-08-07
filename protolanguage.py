@@ -12,35 +12,32 @@ def lex(line):
 class Variable:
     def __init__(self, name): self.name = name
     def __str__(self): return self.name
+    def __repr__(self): return self.name + str(id(self))
 
 
-def tokenize(lexemes, scope):
-    for i, lexeme in enumerate(lexemes):
-        if lexeme[0].isupper():
-            if lexeme in scope:
-                lexemes[i] = scope[lexeme]
-            else:
-                scope[lexeme] = Variable(lexeme)
-                lexemes[i] = scope[lexeme]
+def tokenize(block):
+    results = []
+    variables = {}
+    for statement in block:
+        lexemes = list(statement)
+        for i, lexeme in enumerate(lexemes):
+            if lexeme[0].isupper():
+                if lexeme in variables:
+                    lexemes[i] = variables[lexeme]
+                else:
+                    variables[lexeme] = Variable(lexeme)
+                    lexemes[i] = variables[lexeme]
+        results.append(tuple(lexemes))
+    return results[0], results[1:], variables
 
 
-def guess_variable(consumer, consumed):
+def guess_variable(consumer, consumed, scope):
     if isinstance(consumer[0], Variable):
         for i in range(1, len(consumed) + 1):
-            for scope in unify(consumer[1:], consumed[i:]):
-                yield {**{consumer[0]: consumed[:i]}, **scope}
-
-
-def unify(statement1, statement2):
-    if statement1 == statement2 == ():
-        yield {}
-    elif () in (statement1, statement2):
-        return
-    elif statement1[0] == statement2[0]:
-        yield from unify(statement1[1:], statement2[1:])
-    else:
-        yield from guess_variable(statement1, statement2)
-        yield from guess_variable(statement2, statement1)
+            if isinstance(consumed[i - 1], Variable):
+                return
+            proposal = {**scope, **{consumer[0]: consumed[:i]}}
+            yield from unify(consumer[1:], consumed[i:], proposal)
 
 
 def interpolate(statement, scope):
@@ -53,11 +50,27 @@ def interpolate(statement, scope):
     return tuple(result)
 
 
+def unify(statement1, statement2, scope):
+    statement1 = interpolate(statement1, scope)
+    statement2 = interpolate(statement2, scope)
+    if statement1 == statement2 == ():
+        yield scope
+    elif () in (statement1, statement2):
+        return
+    elif statement1[0] == statement2[0]:
+        yield from unify(statement1[1:], statement2[1:], scope)
+    elif isinstance(statement1[0], Variable) and isinstance(statement2[0], Variable):
+        proposal = {**scope, **{statement1[0]: statement2[:1]}}
+        yield from unify(statement1[1:], statement2[1:], proposal)
+    else:
+        yield from guess_variable(statement1, statement2, scope)
+        yield from guess_variable(statement2, statement1, scope)
+
+
 def match(query, statement):
     def goal(scope):
-        statement1 = interpolate(query, scope)
-        statement2 = interpolate(statement, scope)
-        yield from unify(statement1, statement2)
+        # import pdb; pdb.set_trace()
+        yield from unify(query, statement, scope)
     return goal
 
 
@@ -72,7 +85,8 @@ def search(statement, db):
             if db[key] is True:
                 goals.append(match(statement, key))
             else:
-                goals.append(conj(match(statement, key), db[key]))
+                head, body, _ = tokenize(db[key])
+                goals.append(conj(match(statement, head), definition(body, db)))
         return functools.reduce(disj, goals, lambda x: ())(scope)
     return goal
 
@@ -92,20 +106,23 @@ def definition(conjuncts, db):
 def get_lines(query, scopes):
     seen = set()
     for scope in scopes:
+        # task: preserve whitespace from initial string - matters for puncutated sentences
         result = ' '.join(str(x) for x in interpolate(query, scope)) + '\n'
         if result not in seen:
             seen.add(result)
             yield result
 
 
-def run(block, db, scope):
-    for lexemes in block: tokenize(lexemes, scope)
-    head, body = tuple(block[0]), [tuple(lexemes) for lexemes in block[1:]]
-    if block and db.get(head) is not True:
+def run(block, db):
+    if block:
+        head, body, variables = tokenize(block)
         if body:
-            db[head] = definition(body, db)
-        elif scope:
-            return ''.join(get_lines(head, search(head, db)({})))
+            db[head] = block
+        elif variables:
+            query = search(head, db)
+            stream =  list(query({}))
+            # print(stream)
+            return ''.join(get_lines(head, stream))
         else:
             db[head] = True
     return ''
@@ -116,8 +133,8 @@ def main():
     print("Protolanguage (Version 0)")
     while True:
         lines = [lex(input('>>> '))]
-        while lines[-1]: lines.append(lex(input('... ')))
-        print(run(lines[:-1], db, {}), end='')
+        while lines[-1]: lines.append(tuple(lex(input('... '))))
+        print(run(lines[:-1], db), end='')
         if len(sys.argv) == 2 and sys.argv[1] == 'debug': print(db)
 
 
