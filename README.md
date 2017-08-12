@@ -2,6 +2,7 @@
 This is an experimental programming language for writing logic programs in natural language. Until the project is in beta, APIs may change frequently.
 
 Example interpreter session:
+```
 >>> tanner is a child of glen
 ...
 >>> the brother of tanner is a child of glen
@@ -23,3 +24,4 @@ the brother of tanner is a grandchild of don
 glen is a grandchild of lowis
 the brother of glen is a grandchild of lowis
 >>>
+```
