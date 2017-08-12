@@ -15,19 +15,25 @@ class Variable:
     def __repr__(self): return self.name + str(id(self))
 
 
-def tokenize(block):
+def tokenize(lexemes, variables):
+    lexemes = list(lexemes)
+    variables = dict(variables)
+    for i, lexeme in enumerate(lexemes):
+        if lexeme[0].isupper():
+            if lexeme in variables:
+                lexemes[i] = variables[lexeme]
+            else:
+                variables[lexeme] = Variable(lexeme)
+                lexemes[i] = variables[lexeme]
+    return tuple(lexemes), variables
+
+
+def parse(block):
     results = []
     variables = {}
     for statement in block:
-        lexemes = list(statement)
-        for i, lexeme in enumerate(lexemes):
-            if lexeme[0].isupper():
-                if lexeme in variables:
-                    lexemes[i] = variables[lexeme]
-                else:
-                    variables[lexeme] = Variable(lexeme)
-                    lexemes[i] = variables[lexeme]
-        results.append(tuple(lexemes))
+        lexemes, variables = tokenize(statement, variables)
+        results.append(lexemes)
     return results[0], results[1:], variables
 
 
@@ -69,7 +75,6 @@ def unify(statement1, statement2, scope):
 
 def match(query, statement):
     def goal(scope):
-        # import pdb; pdb.set_trace()
         yield from unify(query, statement, scope)
     return goal
 
@@ -85,7 +90,7 @@ def search(statement, db):
             if db[key] is True:
                 goals.append(match(statement, key))
             else:
-                head, body, _ = tokenize(db[key])
+                head, body, _ = parse(db[key])
                 goals.append(conj(match(statement, head), definition(body, db)))
         return functools.reduce(disj, goals, lambda x: ())(scope)
     return goal
@@ -106,22 +111,29 @@ def definition(conjuncts, db):
 def get_lines(query, scopes):
     seen = set()
     for scope in scopes:
-        # task: preserve whitespace from initial string - matters for puncutated sentences
+        # task: preserve whitespace from initial string - matters for punctuated sentences
         result = ' '.join(str(x) for x in interpolate(query, scope)) + '\n'
         if result not in seen:
             seen.add(result)
             yield result
 
 
+def debug(message, items):
+    if len(sys.argv) == 2 and sys.argv[1] == 'debug' and items:
+        print(message + ':')
+        for item in items:
+            print('  ' + str(item))
+
+
 def run(block, db):
     if block:
-        head, body, variables = tokenize(block)
+        head, body, variables = parse(block)
         if body:
             db[head] = block
         elif variables:
             query = search(head, db)
             stream =  list(query({}))
-            # print(stream)
+            debug('Stream', stream)
             return ''.join(get_lines(head, stream))
         else:
             db[head] = True
@@ -133,9 +145,10 @@ def main():
     print("Protolanguage (Version 0)")
     while True:
         lines = [lex(input('>>> '))]
-        while lines[-1]: lines.append(tuple(lex(input('... '))))
+        while lines[-1]:
+            lines.append(tuple(lex(input('... '))))
         print(run(lines[:-1], db), end='')
-        if len(sys.argv) == 2 and sys.argv[1] == 'debug': print(db)
+        debug('DB', db.items())
 
 
 if __name__ == '__main__':
