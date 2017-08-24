@@ -9,8 +9,6 @@ Example interpreter session:
 ...
 >>> glen is a child of don
 ...
->>> the brother of glen is a child of don
-...
 >>> don is a child of lowis
 ...
 >>> X is a grandchild of Y
@@ -22,6 +20,5 @@ Example interpreter session:
 tanner is a grandchild of don
 the brother of tanner is a grandchild of don
 glen is a grandchild of lowis
-the brother of glen is a grandchild of lowis
 >>>
 ```
