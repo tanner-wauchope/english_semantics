@@ -140,8 +140,9 @@ def run(block, db):
     return ''
 
 
-def main():
-    db = collections.OrderedDict()
+def main(db=None):
+    if db is None:
+        db = collections.OrderedDict()
     print("Protolanguage (Version 0)")
     while True:
         lines = [lex(input('>>> '))]

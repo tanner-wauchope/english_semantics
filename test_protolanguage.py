@@ -1,4 +1,7 @@
+import collections
+import io
 import string
+import sys
 
 from protolanguage import (
     lex,
@@ -6,6 +9,8 @@ from protolanguage import (
     tokenize,
     parse,
     guess_variable,
+    run,
+    main,
 )
 
 
@@ -86,3 +91,21 @@ def test_guess_variable_yields_ambiguous_possibilities():
     consumer, consumed = (x, y), ('a', 'b', 'c')
     expected = [{x: ('a',), y: ('b', 'c')}, {x: ('a', 'b'), y: ('c',)}]
     assert list(guess_variable(consumer, consumed, {})) == expected
+
+
+def test_recursion_end_to_end():
+    sys.stdin = io.StringIO(
+        "tanner is a child of glen\n\n"
+        "glen is a child of don\n\n"
+        "don is a child of lowis\n\n"
+        "X is a grandchild of Y\n"
+        "	X is a child of Z\n"
+        "	Z is a child of Y\n\n")
+    db = collections.OrderedDict()
+    try:
+        main(db)
+    except EOFError:
+        sys.stdin = sys.__stdin__
+    assert run([lex("Who is a grandchild of Someone")], db) == (
+        "tanner is a grandchild of don\n"
+        "glen is a grandchild of lowis\n")
