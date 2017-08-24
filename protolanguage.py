@@ -56,26 +56,28 @@ def interpolate(statement, scope):
     return tuple(result)
 
 
-def unify(statement1, statement2, scope):
-    statement1 = interpolate(statement1, scope)
-    statement2 = interpolate(statement2, scope)
-    if statement1 == statement2 == ():
+def unify(consumer, consumed, scope):
+    consumer = interpolate(consumer, scope)
+    consumed = interpolate(consumed, scope)
+    if consumer == consumed == ():
         yield scope
-    elif () in (statement1, statement2):
+    elif () in (consumer, consumed):
         return
-    elif statement1[0] == statement2[0]:
-        yield from unify(statement1[1:], statement2[1:], scope)
-    elif isinstance(statement1[0], Variable) and isinstance(statement2[0], Variable):
-        proposal = {**scope, **{statement1[0]: statement2[:1]}}
-        yield from unify(statement1[1:], statement2[1:], proposal)
+    elif consumer[0] == consumed[0]:
+        yield from unify(consumer[1:], consumed[1:], scope)
+    elif isinstance(consumer[0], Variable) and isinstance(consumed[0], Variable):
+        proposal = {**scope, **{consumer[0]: consumed[:1]}}
+        yield from unify(consumer[1:], consumed[1:], proposal)
     else:
-        yield from guess_variable(statement1, statement2, scope)
-        yield from guess_variable(statement2, statement1, scope)
+        yield from guess_variable(consumer, consumed, scope)
 
 
 def match(query, statement):
     def goal(scope):
-        yield from unify(query, statement, scope)
+        if any(isinstance(item, Variable) for item in statement):
+            yield from unify(statement, query, scope)
+        else:
+            yield from unify(query, statement, scope)
     return goal
 
 
