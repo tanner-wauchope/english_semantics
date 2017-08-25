@@ -4,6 +4,7 @@ import itertools
 import re
 import sys
 
+# need to change the semantics of assignments to lines only conti
 
 def lex(line):
     return [t for t in re.split(r'(\W)', line) if t and not t.isspace()]
@@ -72,29 +73,9 @@ def unify(consumer, consumed, scope):
         yield from guess_variable(consumer, consumed, scope)
 
 
-def match(query, statement):
+def match(consumer, consumed):
     def goal(scope):
-        if any(isinstance(item, Variable) for item in statement):
-            yield from unify(statement, query, scope)
-        else:
-            yield from unify(query, statement, scope)
-    return goal
-
-
-def disj(*goals):
-    return lambda scope: itertools.chain(*(goal(scope) for goal in goals))
-
-
-def search(statement, db):
-    def goal(scope):
-        goals = []
-        for key in db:
-            if db[key] is True:
-                goals.append(match(statement, key))
-            else:
-                head, body, _ = parse(db[key])
-                goals.append(conj(match(statement, head), definition(body, db)))
-        return functools.reduce(disj, goals, lambda x: ())(scope)
+        yield from unify(consumer, consumed, scope)
     return goal
 
 
@@ -105,16 +86,37 @@ def conj(goal1, goal2):
     return goal
 
 
+def disj(*goals):
+    return lambda scope: itertools.chain(*(goal(scope) for goal in goals))
+
+
 def definition(conjuncts, db):
     goals = (search(conjunct, db) for conjunct in conjuncts)
     return functools.reduce(conj, goals)
+
+
+def search(statement, db):
+    def goal(scope):
+        goals = []
+        for key in db:
+            if db[key] is True:
+                goals.append(match(statement, key))
+            else:
+                head, body, _ = parse(db[key])
+                goals.append(conj(match(head, statement), definition(body, db)))
+        return functools.reduce(disj, goals, lambda x: ())(scope)
+    return goal
+
+
+def get_line(tokens, scope):
+    return ' '.join(str(x) for x in interpolate(tokens, scope)) + '\n'
 
 
 def get_lines(query, scopes):
     seen = set()
     for scope in scopes:
         # task: preserve whitespace from initial string - matters for punctuated sentences
-        result = ' '.join(str(x) for x in interpolate(query, scope)) + '\n'
+        result = get_line(query, scope)
         if result not in seen:
             seen.add(result)
             yield result
@@ -130,6 +132,13 @@ def debug(message, items):
 def run(block, db):
     if block:
         head, body, variables = parse(block)
+        if all(isinstance(t, Variable) or t.isdigit() for t in head):
+            key = tuple(block[0])
+            if body:
+                db[key] = block[1:]
+            elif key in db:
+                return ''.join(get_line(statement, db) for statement in db[key])
+
         if body:
             db[head] = block
         elif variables:
