@@ -4,7 +4,6 @@ import itertools
 import re
 import sys
 
-# need to change the semantics of assignments to lines only conti
 
 def lex(line):
     return [t for t in re.split(r'(\W)', line) if t and not t.isspace()]
@@ -134,11 +133,12 @@ def run(block, db):
         head, body, variables = parse(block)
         if all(isinstance(t, Variable) or t.isdigit() for t in head):
             key = tuple(block[0])
-            if body:
+            if body and len(body) == 1:
                 db[key] = block[1:]
             elif key in db:
                 return ''.join(get_line(statement, db) for statement in db[key])
-
+            else:
+                return 'Invalid key: ' + str(key) + '\n'
         if body:
             db[head] = block
         elif variables:
