@@ -81,12 +81,12 @@ def match(consumer, consumed):
 def conj(goal1, goal2):
     def goal(scope):
         intermediate = goal1(scope)
-        return itertools.chain(*map(goal2, intermediate))
+        return itertools.chain.from_iterable(map(goal2, intermediate))
     return goal
 
 
 def disj(*goals):
-    return lambda scope: itertools.chain(*(goal(scope) for goal in goals))
+    return lambda scope: itertools.chain.from_iterable(goal(scope) for goal in goals)
 
 
 def definition(conjuncts, db):
