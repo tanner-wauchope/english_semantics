@@ -1,38 +1,68 @@
 import collections
-import functools
 import itertools
-import re
 import sys
 
 
+def char_type(char):
+    if char.isalpha():
+        return 'a'
+    elif char.isdigit():
+        return 'd'
+    elif char.isspace():
+        return 's'
+    else:
+        return char
+
+
 def lex(line):
-    return [t for t in re.split(r'(\W)', line) if t and not t.isspace()]
+    if not line:
+        return []
+    result = []
+    token = [line[0]]
+    for char in line[1:]:
+        if char_type(token[-1]) == char_type(char):
+            token.append(char)
+        else:
+            result.append(''.join(token))
+            token = [char]
+    result.append(''.join(token))
+    return result
 
 
 class Variable:
-    def __init__(self, name): self.name = name
-    def __str__(self): return self.name
-    def __repr__(self): return self.name + str(id(self))
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name + str(id(self))
 
 
 def tokenize(lexemes, variables):
-    lexemes = list(lexemes)
-    variables = dict(variables)
-    for i, lexeme in enumerate(lexemes):
+    result = []
+    new_variables = {}
+    for lexeme in lexemes:
         if lexeme[0].isupper():
             if lexeme in variables:
-                lexemes[i] = variables[lexeme]
+                result.append(variables[lexeme])
+            elif lexeme in new_variables:
+                result.append(new_variables[lexeme])
             else:
-                variables[lexeme] = Variable(lexeme)
-                lexemes[i] = variables[lexeme]
-    return tuple(lexemes), variables
+                new_variables[lexeme] = Variable(lexeme)
+                result.append(new_variables[lexeme])
+        elif not lexeme.isspace():
+            result.append(lexeme)
+    return tuple(result), new_variables
 
 
 def parse(block):
     results = []
     variables = {}
     for statement in block:
-        lexemes, variables = tokenize(statement, variables)
+        lexemes, new_variables = tokenize(statement, variables)
+        variables.update(new_variables)
         results.append(lexemes)
     return results[0], results[1:], variables
 
@@ -46,11 +76,17 @@ def guess_variable(consumer, consumed, scope):
             yield from unify(consumer[1:], consumed[i:], proposal)
 
 
-def interpolate(statement, scope):
+def interpolate(pattern, scope):
+    if not hasattr(pattern, '__iter__'):
+        return scope.get(pattern, pattern)
     result = []
-    for token in statement:
+    for token in pattern:
         if token in scope:
-            result.extend(interpolate(scope[token], scope))
+            replacement = interpolate(scope[token], scope)
+            if hasattr(replacement, '__iter__'):
+                result.extend(replacement)
+            else:
+                result.append(replacement)
         else:
             result.append(token)
     return tuple(result)
@@ -78,20 +114,25 @@ def match(consumer, consumed):
     return goal
 
 
-def conj(goal1, goal2):
+def conj(*goals):
     def goal(scope):
-        intermediate = goal1(scope)
-        return itertools.chain.from_iterable(map(goal2, intermediate))
+        result = goals[0](scope)
+        for subgoal in goals[1:]:
+            result = itertools.chain.from_iterable(map(subgoal, result))
+        return result
     return goal
 
 
 def disj(*goals):
-    return lambda scope: itertools.chain.from_iterable(goal(scope) for goal in goals)
+    def goal(scope):
+        subgoal_streams = (subgoal(scope) for subgoal in goals)
+        return itertools.chain.from_iterable(subgoal_streams)
+    return goal
 
 
 def definition(conjuncts, db):
     goals = (search(conjunct, db) for conjunct in conjuncts)
-    return functools.reduce(conj, goals)
+    return conj(*goals)
 
 
 def search(statement, db):
@@ -103,12 +144,12 @@ def search(statement, db):
             else:
                 head, body, _ = parse(db[key])
                 goals.append(conj(match(head, statement), definition(body, db)))
-        return functools.reduce(disj, goals, lambda x: ())(scope)
+        return disj(*goals)(scope)
     return goal
 
 
 def get_line(tokens, scope):
-    return ' '.join(str(x) for x in interpolate(tokens, scope)) + '\n'
+    return ''.join(str(x) for x in interpolate(tokens, scope)) + '\n'
 
 
 def get_lines(query, scopes):
@@ -129,23 +170,25 @@ def debug(message, items):
 
 
 def run(block, db):
-    if block:
+    if any(line for line in block):
         head, body, variables = parse(block)
         if all(isinstance(t, Variable) or t.isdigit() for t in head):
-            key = tuple(block[0])
+            key = tuple(item for item in block[0] if not item.isspace())
             if body and len(body) == 1:
-                db[key] = block[1:]
+                db[key] = body
             elif key in db:
                 return ''.join(get_line(statement, db) for statement in db[key])
             else:
                 return 'Invalid key: ' + str(key) + '\n'
-        if body:
+        elif body:
             db[head] = block
         elif variables:
             query = search(head, db)
-            stream =  list(query({}))
+            stream =  list(itertools.islice(query({}), 1000))
             debug('Stream', stream)
-            return ''.join(get_lines(head, stream))
+            lines = get_lines(interpolate(block[0], variables), stream)
+            return (''.join(lines) or
+                "No results found. If you expected results, check for typos.\n")
         else:
             db[head] = True
     return ''
@@ -157,9 +200,11 @@ def main(db=None):
     print("Protolanguage (Version 0)")
     while True:
         lines = [lex(input('>>> '))]
-        while lines[-1]:
-            lines.append(tuple(lex(input('... '))))
-        print(run(lines[:-1], db), end='')
+        if any(token[0].isupper() for token in lines[0]):
+            while lines[-1]:
+                lines.append(tuple(lex(input('...     '))))
+            lines.pop()
+        print(run(lines, db), end='')
         debug('DB', db.items())
 
 

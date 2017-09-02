@@ -26,12 +26,12 @@ def test_lex_punctuation_is_tokens():
     assert lex(string.punctuation) == list(string.punctuation)
 
 
-def test_lex_whitespace_is_nothing():
-    assert lex(string.whitespace) == []
+def test_lex_whitespace_is_token():
+    assert lex(string.whitespace) == [string.whitespace]
 
 
 def test_lex_all_types_is_tokens():
-    assert lex('\t- Ab 0.1\n') == ['-', 'Ab', '0', '.', '1']
+    assert lex('\t-Ab 0.1\n') == ['\t', '-', 'Ab', ' ', '0', '.', '1', '\n']
 
 
 def test_Variable_is_unique():
