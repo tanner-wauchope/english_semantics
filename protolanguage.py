@@ -190,7 +190,7 @@ def run(block, db):
 def main(db=None):
     if db is None:
         db = {}
-    print("Protolanguage (Version 0)")
+    print("Protolanguage (Beta)")
     while True:
         lines = [lex(input('>>> '))]
         if any(token[0].isupper() for token in lines[0]):
