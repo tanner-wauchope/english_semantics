@@ -4,6 +4,7 @@ This is an interpreter for logic programs written in natural language.
 To invoke the interpreter, run `python protolanguage.py`
 
 Example interpreter session:
+
     ```
     >>> tanner is a child of glen
     >>> glen is a child of don
