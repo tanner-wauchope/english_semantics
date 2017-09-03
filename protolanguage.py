@@ -144,7 +144,6 @@ def get_line(tokens, scope):
 def get_lines(query, scopes):
     seen = set()
     for scope in scopes:
-        # task: preserve whitespace from initial string - matters for punctuated sentences
         result = get_line(query, scope)
         if result not in seen:
             seen.add(result)
@@ -176,8 +175,7 @@ def run(block, db):
             stream =  list(itertools.islice(query({}), 1000))
             debug('Stream', stream)
             lines = get_lines(interpolate(block[0], variables), stream)
-            return (''.join(lines) or
-                "No results found. If you expected results, check for typos.\n")
+            return ''.join(lines) or "No results found.\n"
         else:
             db[head] = True
     return ''
