@@ -5,11 +5,7 @@ Example interpreter session:
 ```
 >>> tanner is a child of glen
 ...
->>> the brother of tanner is a child of glen
-...
 >>> glen is a child of don
-...
->>> don is a child of lowis
 ...
 >>> X is a grandchild of Y
 ... 	X is a child of Z
@@ -18,7 +14,5 @@ Example interpreter session:
 >>> Who is a grandchild of Someone                   
 ...
 tanner is a grandchild of don
-the brother of tanner is a grandchild of don
-glen is a grandchild of lowis
 >>>
 ```
