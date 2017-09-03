@@ -3,30 +3,19 @@ import itertools
 import sys
 
 
-def char_type(char):
-    if char.isalpha():
-        return 'a'
-    elif char.isdigit():
-        return 'd'
-    elif char.isspace():
-        return 's'
-    else:
-        return char
-
-
 def lex(line):
     if not line:
         return []
-    result = []
-    token = [line[0]]
+    result = [[line[0]]]
     for char in line[1:]:
-        if char_type(token[-1]) == char_type(char):
+        token = result[-1]
+        extend_alpha = token[0].isalpha() and char.isalpha()
+        extend_digit = token[0].isdigit() and char.isdigit()
+        if extend_alpha or extend_digit:
             token.append(char)
         else:
-            result.append(''.join(token))
-            token = [char]
-    result.append(''.join(token))
-    return result
+            result.append([char])
+    return [''.join(token) for token in result]
 
 
 class Variable:
