@@ -18,6 +18,8 @@ def lex(line):
 
 
 class Variable:
+    """ Variables are intentionally unequal even when spelt the same. """
+
     def __init__(self, name):
         self.name = name
 
@@ -95,6 +97,11 @@ def unify(consumer, consumed, scope):
     else:
         yield from guess_variable(consumer, consumed, scope)
 
+
+# The next handful of functions are for creating goals.
+# A goal is a function from a scope to a stream of scopes.
+# Complex goals can be made from simple goals using logical connectives.
+# A query can be initiated by calling the correct goal on the empty scope.
 
 def match(consumer, consumed):
     def goal(scope):
