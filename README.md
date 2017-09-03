@@ -1,6 +1,7 @@
-# protolanguage (alpha)
+# protolanguage (beta)
 This is an interpreter for logic programs written in natural language.
-Until the project is in beta, APIs may change frequently.
+
+To invoke the interpreter, run `python protolanguage.py`
 
 Example interpreter session:
     ```
