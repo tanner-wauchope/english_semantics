@@ -168,12 +168,7 @@ def run(block, db):
         head, body, variables = parse(block)
         if all(isinstance(t, Variable) or t.isdigit() for t in head):
             key = tuple(item for item in block[0] if not item.isspace())
-            if body and len(body) == 1:
-                db[key] = body
-            elif key in db:
-                return ''.join(get_line(statement, db) for statement in db[key])
-            else:
-                return 'Invalid key: ' + str(key) + '\n'
+            return 'Invalid statement: ' + str(key) + '\n'
         elif body:
             db[head] = block
         elif variables:

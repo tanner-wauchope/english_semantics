@@ -105,6 +105,6 @@ def test_recursion_end_to_end():
         main(db)
     except EOFError:
         sys.stdin = sys.__stdin__
-    assert run([lex("Who is Someone's grandchild")], db) == (
-        "tanner is don's grandchild\n"
-        "glen is lowis's grandchild\n")
+    actual = run([lex("Who is Someone's grandchild")], db)
+    expected = "tanner is don's grandchild\nglen is lowis's grandchild\n"
+    assert set(actual.split('\n')) == set(expected.split('\n'))
