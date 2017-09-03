@@ -1,4 +1,3 @@
-import collections
 import io
 import string
 import sys
@@ -101,7 +100,7 @@ def test_recursion_end_to_end():
         "X is a grandchild of Y\n"
         "	X is a child of Z\n"
         "	Z is a child of Y\n\n")
-    db = collections.OrderedDict()
+    db = {}
     try:
         main(db)
     except EOFError:

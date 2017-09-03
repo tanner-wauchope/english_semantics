@@ -1,4 +1,3 @@
-import collections
 import itertools
 import sys
 
@@ -183,7 +182,7 @@ def run(block, db):
 
 def main(db=None):
     if db is None:
-        db = collections.OrderedDict()
+        db = {}
     print("Protolanguage (Version 0)")
     while True:
         lines = [lex(input('>>> '))]
