@@ -4,15 +4,12 @@ This is an experimental programming language for writing logic programs in natur
 Example interpreter session:
 ```
 >>> tanner is a child of glen
-...
 >>> glen is a child of don
-...
->>> X is a grandchild of Y
-... 	X is a child of Z
-... 	Z is a child of Y
-...
->>> Who is a grandchild of Someone                   
-...
-tanner is a grandchild of don
->>>
+>>> X is Y's grandchild
+...     X is a child of Z
+...     Z is a child of Y
+...     
+>>> Who is Someone's grandchild
+...     
+tanner is don's grandchild
 ```

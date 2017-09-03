@@ -97,7 +97,7 @@ def test_recursion_end_to_end():
         "tanner is a child of glen\n\n"
         "glen is a child of don\n\n"
         "don is a child of lowis\n\n"
-        "X is a grandchild of Y\n"
+        "X is Y's grandchild\n"
         "	X is a child of Z\n"
         "	Z is a child of Y\n\n")
     db = {}
@@ -105,6 +105,6 @@ def test_recursion_end_to_end():
         main(db)
     except EOFError:
         sys.stdin = sys.__stdin__
-    assert run([lex("Who is a grandchild of Someone")], db) == (
-        "tanner is a grandchild of don\n"
-        "glen is a grandchild of lowis\n")
+    assert run([lex("Who is Someone's grandchild")], db) == (
+        "tanner is don's grandchild\n"
+        "glen is lowis's grandchild\n")
