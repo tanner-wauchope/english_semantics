@@ -1,5 +1,5 @@
 # protolanguage (beta)
-This is an interpreter for logic programs written in natural language.
+This is an interpreter for logic programs written with a free-from syntax similar to many natural languages.
 
 To invoke the interpreter, run `python protolanguage.py`
 
